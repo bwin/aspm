@@ -1,0 +1,32 @@
+{
+  "name": "aspm",
+  "version": "0.0.1",
+  "description": "Atom-Shell Package Manager",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "engines": {
+    "node": ">= 0.10.0"
+  },
+  "keywords": [
+    "atom-shell",
+    "package manager"
+  ],
+  "homepage": "https://github.com/bwin/aspm",
+  "author": {
+    "name": "Benjamin Winkler (bwin)"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/bwin/aspm.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bwin/aspm/issues"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "coffee-script": "^1.8.0",
+    "commander": "^2.5.0"
+  }
+}
