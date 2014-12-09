@@ -30,10 +30,8 @@ fetchModule = (module, cb) ->
 	cmd = "npm install --ignore-scripts #{module}"
 	console.log cmd
 	child = exec cmd
-	child.stdout.on 'data', (chunk) ->
-		console.log chunk
-		child.stderr.on 'data', (chunk) ->
-		console.error chunk
+	child.stdout.pipe process.stdout
+	child.stderr.pipe process.stderr
 	child.on 'exit', -> cb?()
 
 buildModule = (module, target, arch, cb) ->
@@ -43,12 +41,10 @@ buildModule = (module, target, arch, cb) ->
 		cwd: "node_modules/#{module}"
 		#env:
 		#	HOME: '~/.atom-shell-gyp'
-	child.stdout.on 'data', (chunk) ->
-		console.log chunk
-	child.stderr.on 'data', (chunk) ->
-		console.error chunk
+	child.stdout.pipe process.stdout
+	child.stderr.pipe process.stderr
 	child.on 'exit', ->
-		# we need to move the module.node file to lib/binding
+		# we need to move the node_module.node file to lib/binding
 		fs.mkdirSync "node_modules/#{module}/lib/binding"
 		fs.renameSync "node_modules/#{module}/build/Release/node_#{module}.node", "node_modules/#{module}/lib/binding/node_#{module}.node"
 		rmDirRecursiveSync "node_modules/#{module}/build/"
@@ -62,7 +58,7 @@ installModules = (module, target, arch, cb) ->
 
 program
 .version "v#{pkg.version}"
-.description 'Manipulate asar archive files'
+.description 'Install and build npm modules for Atom-Shell'
 .option '-t, --target <n>', 'Atom-Shell version'
 .option '-a, --arch <n>', 'target architecture'
 .option '-s, --save', 'save as dependency to package.json'
