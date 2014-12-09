@@ -1,10 +1,10 @@
 {
   "name": "aspm",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Atom-Shell Package Manager",
   "main": "index.js",
   "bin": {
-    "aspm": "index.js"
+    "aspm": "bin/aspm"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
