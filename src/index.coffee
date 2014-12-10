@@ -26,24 +26,22 @@ rmDirRecursiveSync = (dirPath) ->
 	try fs.rmdirSync dirPath
 	return
 
-fail = ->
-	console.error "not ok".red
-	process.exit 1
 
 module.exports.fetchModule = fetchModule = (module, program, cb) ->
-	console.log "fetching #{module or 'all'}"
+	console.log "fetching #{module or 'all'}" unless program.quiet
 	module ?= ''
 	module = program.tarball if program.tarball
 	cmd = "npm install --ignore-scripts #{module}"
 	cmd += ' --save' if program.save
 	cmd += ' --save-dev' if program['save-dev']
-	console.log "> #{cmd}".lightBlue
+	cmd += ' --production' unless program['no-production']
+	console.log "> #{cmd}".lightBlue unless program.quiet
 	child = exec cmd
-	child.stdout.pipe process.stdout
+	child.stdout.pipe process.stdout unless program.quiet
 	child.stderr.pipe process.stderr
 	child.on 'exit', (code) ->
-		fail() if code isnt 0
-		console.log "ok".green
+		return cb?(new Error "not ok") if code isnt 0
+		#console.log "ok".green
 		cb?()
 	return
 
@@ -55,12 +53,10 @@ module.exports.buildModule = buildModule = (module, program, cb) ->
 	platform = program['target-platform'] or config?['platform'] or os.platform()
 	modules = []
 
-	unless target
-		console.error 'aspm error: no atom-shell version specified.'
-		fail()
-	unless arch
-		console.error 'aspm error: no target architecture specified.'
-		fail()
+	
+	return cb() unless fs.existsSync path.join process.cwd(), 'node_modules', module, 'binding.gyp'
+	return cb?(new Error "no atom-shell version specified.") unless target
+	return cb?(new Error "no target architecture specified.") unless arch
 
 	modules = module.split ' ' if module.indexOf(' ') isnt -1
 	modules = Object.keys projectPkg.dependencies unless module
@@ -75,9 +71,8 @@ module.exports.buildModule = buildModule = (module, program, cb) ->
 		return
 
 
-	return cb() unless fs.existsSync path.join process.cwd(), 'node_modules', module, 'binding.gyp'
 	
-	console.log "building #{module}"
+	console.log "building #{module} for Atom-Shell v#{target} #{os.platform()} #{arch}" unless program.quiet
 
 	buildPkg = require path.join process.cwd(), 'node_modules', module, 'package.json'
 
@@ -94,22 +89,21 @@ module.exports.buildModule = buildModule = (module, program, cb) ->
 			module_name: buildPkg.binary.module_name
 			module_path: path.join '..', module_path
 
-	console.log "targeting Atom-Shell v#{target} #{os.platform()} #{arch}"
 	cmd = "node-gyp rebuild --target=#{target} --arch=#{arch} --target_platform=#{platform} --dist-url=https://gh-contractor-zcbenz.s3.amazonaws.com/atom-shell/dist"
 	if fakeNodePreGyp
 		cmd += " --module_name=#{preGyp.module_name}"
 		cmd += " --module_path=#{preGyp.module_path}"
 
-	console.log "> #{cmd}".lightBlue
+	console.log "> #{cmd}".lightBlue unless program.quiet
 	child = exec cmd,
 		cwd: "node_modules/#{module}"
 		#env:
 		#	HOME: '~/.atom-shell-gyp'
-	child.stdout.pipe process.stdout
+	child.stdout.pipe process.stdout unless program.quiet
 	child.stderr.pipe process.stderr
 	child.on 'exit', (code) ->
-		fail() if code isnt 0
-		console.log "ok".green
+		return cb?(new Error "not ok") if code isnt 0
+		#console.log "ok".green
 		unless fakeNodePreGyp
 			# we move the node_module.node file to lib/binding
 			try fs.mkdirSync "node_modules/#{module}/lib/binding"
@@ -119,9 +113,10 @@ module.exports.buildModule = buildModule = (module, program, cb) ->
 	return
 
 module.exports.installModule = (module, program, cb) ->
-	console.log "installing #{module or 'all'}"
+	console.log "installing #{module or 'all'}" unless program.quiet
 	fetchModule module, program, (err) ->
+		return cb?(err) if err
 		buildModule module, program, (err) ->
-			return cb?()
+			return cb?(err)
 		return
 	return

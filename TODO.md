@@ -6,6 +6,7 @@
 - [ ] fix building for a specific module ver `sqlite@3.0.4`
 - [x] output for cmd is "> #{cmd}"
 - [ ] test `aspm i package1 package2 package3` & add example
+- [ ] d'oh! build modules recursive
 - [ ] !!! fake support for current node-pre-gyp with lookup table as-ver -> node_abi
 - [ ] add `aspm update`
 - [ ] test new node-pre-gyp versioning patch
