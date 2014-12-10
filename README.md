@@ -6,19 +6,17 @@
 
 > A node CLI script like npm but for Atom-Shell. Install and build npm-modules for Atom-Shell.
 
-**Warning:** *Very early alpha*
+**Warning:** *May be unreliable at the moment.*
 
 ## Prequisities
-- `node`
-- `npm`
-- `node-gyp` and also fulfill it's [requirements](https://github.com/TooTallNate/node-gyp#installation).
+Since you're using Atom-Shell you most likely have those installed already.
+- `node` & `npm`(global)
+- `node-gyp`(global), also fulfill it's [requirements](https://github.com/TooTallNate/node-gyp#installation).
 
 ## Installation
-
-Install (preferred globally) with `npm install aspm -g`
+Install (preferred globally) with `npm install aspm -g`.
 
 ## Usage
-
 ```
   Usage: aspm [options] [command]
 
@@ -40,36 +38,49 @@ Install (preferred globally) with `npm install aspm -g`
     --tarball                         (fetch the url and) install from tarball.
 ```
 
-## Examples
-
-### Install all modules from package.json
-`aspm install --target 0.19.5 --arch ia32`
-
-### Install specific module and save as dependency in package.json
-`aspm install sqlite3 --save --target 0.19.5 --arch ia32`
-
-### Install module from tarball
-`aspm install sqlite3 --tarball https://github.com/mapbox/node-sqlite3/archive/master.tar.gz --target 0.19.5 --arch ia32`
-
-### Install specific module and save as dependency in package.json
-`aspm install sqlite3 --tarball https://github.com/mapbox/node-sqlite3/archive/master.tar.gz --target 0.19.5 --arch ia32`
-
-### Build a specific module
-`aspm build sqlite3 --target 0.19.5 --arch ia32`
-
 ## Configuration (optional)
-You can configure default values for target, arch and platform in your package.json
+You can (and should to make things more convenient) configure default values for target, arch and platform in your `package.json`.
 ```js
 {
-	"config": {
-		"atom-shell": {
-			"version": "0.19.5",
-			"arch": "ia32",
-			"platform": "win32"
-		}
-	}
+  "config": {
+    "atom-shell": {
+      "version": "0.19.5",
+      "arch": "ia32",
+      "platform": "win32"
+    }
+  }
 }
+```
+This way you can use it just like npm without additional parameters (for basic tasks as shown in usage).
+
+### Overriding configuration
+You can always set/override some or all configuration values. For example: `aspm install --target 0.19.5 --arch ia32`.
+
+### Without configuration
+**Important:** If you don't specify default values, you'll always have to provide at least a target and arch.
+
+## Examples
+Please note that `sqlite3` as an example does not work at the moment because of `node-pre-gyp`.
+```
+# Install all modules from package.json
+aspm install
+
+# Install specific module and save as dependency in package.json
+aspm install sqlite3 --save
+
+# Install module from tarball
+# In contrast to npm you have to specify the module name here too.
+aspm install sqlite3 --tarball https://github.com/mapbox/node-sqlite3/archive/master.tar.gz --target 0.19.5 --arch ia32
+
+# Build a specific module for a specific target
+aspm build sqlite3 --target 0.19.5 --arch ia32
 ```
 
 ## BTW
-I discovered that somebody else has done something similar at https://github.com/probablycorey/atom-node-module-installer
+There may or may not be several (maybe better?) alternatives to this.
+- https://github.com/atom/atom-shell/blob/master/docs/tutorial/using-native-node-modules.md
+
+I haven't looked into these, yet.
+- https://github.com/paulcbetts/grunt-build-atom-shell
+- https://github.com/atom/atom-shell-starter in scripts/
+- https://github.com/probablycorey/atom-node-module-installer

@@ -1,2 +1,1 @@
-require('coffee-script/register');
-require('./aspm');
+require('./lib');

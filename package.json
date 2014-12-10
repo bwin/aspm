@@ -1,13 +1,14 @@
 {
   "name": "aspm",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Atom-Shell Package Manager",
   "main": "index.js",
   "bin": {
     "aspm": "bin/aspm"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "coffee": "coffee --output lib --compile src"
   },
   "engines": {
     "node": ">= 0.10.0"
@@ -31,6 +32,7 @@
   "dependencies": {
     "coffee-script": "^1.8.0",
     "commander": "^2.5.0",
-    "queue-async": "^1.0.7"
+    "queue-async": "^1.0.7",
+    "terminal-colors": "^0.1.3"
   }
 }
