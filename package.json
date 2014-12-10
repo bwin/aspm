@@ -1,6 +1,6 @@
 {
   "name": "aspm",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Atom-Shell Package Manager",
   "main": "index.js",
   "bin": {
