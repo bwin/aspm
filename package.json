@@ -30,6 +30,7 @@
   "license": "MIT",
   "dependencies": {
     "coffee-script": "^1.8.0",
-    "commander": "^2.5.0"
+    "commander": "^2.5.0",
+    "queue-async": "^1.0.7"
   }
 }
