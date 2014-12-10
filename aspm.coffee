@@ -47,7 +47,7 @@ buildModule = (module, cb) ->
 	config = projectPkg.config?['atom-shell']
 	target = program.target or config?.version
 	arch = program.arch or config?.arch
-	platform = program['target-platform'] or config?['target-platform'] or os.platform()
+	platform = program['target-platform'] or config?['platform'] or os.platform()
 
 	unless module
 		# build all (serially)
@@ -115,9 +115,9 @@ installModule = (module, cb) ->
 program
 .version "v#{pkg.version}"
 .description 'Install and build npm modules for Atom-Shell'
-.option '-t, --target <n>', 'Atom-Shell version'
-.option '-a, --arch <n>', 'target architecture'
-.option '-a, --target-platform <n>', 'target platform'
+.option '-t, --target <version>', 'Atom-Shell version'
+.option '-a, --arch <arch>', 'target architecture'
+.option '-a, --target-platform <platform>', 'target platform'
 .option '-s, --save', 'save as dependency to package.json'
 .option '-s, --save-dev', 'save as devDependency to package.json'
 .option '--tarball', '(fetch the url and) install from tarball.'
