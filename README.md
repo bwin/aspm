@@ -4,12 +4,14 @@
 [![dependencies](http://img.shields.io/david/bwin/aspm.svg?style=flat-square)](https://david-dm.org/bwin/aspm)
 [![npm version](http://img.shields.io/npm/v/aspm.svg?style=flat-square)](https://npmjs.org/package/aspm)
 
-> Install and build modules for Atom-Shell.
+> A node CLI script like npm but for Atom-Shell. Install and build npm-modules for Atom-Shell.
 
 **Warning:** *Very early alpha*
 
 ## Prequisities
-You need a globally installed `node-gyp` and also fulfill it's [requirements](https://github.com/TooTallNate/node-gyp#installation).
+- `node`
+- `npm`
+- `node-gyp` and also fulfill it's [requirements](https://github.com/TooTallNate/node-gyp#installation).
 
 ## Installation
 
