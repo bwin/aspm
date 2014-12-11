@@ -11,7 +11,7 @@ platform = os.platform()
 testInstall = (moduleName, opts={}) ->
 	opts.quiet = yes
 	msg = "should install '#{moduleName}'"
-	msg += " for Atom-Shell@#{opts.target} on #{platform} @#{opts.arch}" if opts.target and opts.arch
+	msg += " for Atom-Shell@#{opts.target} on #{platform} #{opts.arch}" if opts.target and opts.arch
 	msg += " from #{opts.tarball}" if opts.tarball
 	it msg, (done) ->
 		aspm.installModule moduleName, opts, (err) ->

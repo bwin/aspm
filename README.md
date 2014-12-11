@@ -5,7 +5,7 @@
 
 > A node CLI script like npm but for Atom-Shell. Install and build npm-modules for Atom-Shell.
 
-`aspm` is designed as an replacement for `npm` if you're working on an Atom-Shell project.
+`aspm` is designed as a replacement for `npm` if you're working on an Atom-Shell project.
 
 **Warning:** *May be unreliable at the moment.*
 
