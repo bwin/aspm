@@ -27,8 +27,8 @@ rmDirRecursiveSync = (dirPath) ->
 	return
 
 
-configureModule = (module, program, cb) ->
-	cmd = "node-gyp configure"
+configureModule = (module, program, nodePreGypParams, cb) ->
+	cmd = "node-gyp configure #{nodePreGypParams}"
 	console.log "> #{cmd}".lightBlue unless program.quiet
 	child = exec cmd,
 		cwd: "node_modules/#{module}"
@@ -64,6 +64,7 @@ module.exports.buildModule = buildModule = (module, program, cb) ->
 	arch = program.arch or config?.arch
 	platform = program['target-platform'] or config?['platform'] or os.platform()
 	modules = []
+	nodePreGypParams = ''
 
 	# skip if module has no bynding.gyp
 	return cb() unless fs.existsSync path.join process.cwd(), 'node_modules', module, 'binding.gyp'
@@ -83,28 +84,29 @@ module.exports.buildModule = buildModule = (module, program, cb) ->
 				return cb()
 		return
 
-	configureModule module, program, (err) ->
+	buildPkg = require path.join process.cwd(), 'node_modules', module, 'package.json'
+
+	fakeNodePreGyp = buildPkg.dependencies?['node-pre-gyp']? and buildPkg.binary?
+	if fakeNodePreGyp
+		module_path = buildPkg.binary.module_path
+		# fake node-pre-gyp
+		module_path = module_path
+		.replace '{node_abi}', "atom-shell-v#{target}"
+		.replace '{platform}', os.platform()
+		.replace '{arch}', arch
+		
+		preGyp =
+			module_name: buildPkg.binary.module_name
+			module_path: path.join '..', module_path
+
+	if fakeNodePreGyp
+		nodePreGypParams += " --module_name=#{preGyp.module_name}"
+		nodePreGypParams += " --module_path=#{preGyp.module_path}"
+
+	configureModule module, program, nodePreGypParams, (err) ->
 		console.log "building #{module} for Atom-Shell v#{target} #{os.platform()} #{arch}" unless program.quiet
 
-		buildPkg = require path.join process.cwd(), 'node_modules', module, 'package.json'
-
-		fakeNodePreGyp = buildPkg.dependencies?['node-pre-gyp']? and buildPkg.binary?
-		if fakeNodePreGyp
-			module_path = buildPkg.binary.module_path
-			# fake node-pre-gyp
-			module_path = module_path
-			.replace '{node_abi}', "atom-shell-v#{target}"
-			.replace '{platform}', os.platform()
-			.replace '{arch}', arch
-			
-			preGyp =
-				module_name: buildPkg.binary.module_name
-				module_path: path.join '..', module_path
-
-		cmd = "node-gyp rebuild --target=#{target} --arch=#{arch} --target_platform=#{platform} --dist-url=https://gh-contractor-zcbenz.s3.amazonaws.com/atom-shell/dist"
-		if fakeNodePreGyp
-			cmd += " --module_name=#{preGyp.module_name}"
-			cmd += " --module_path=#{preGyp.module_path}"
+		cmd = "node-gyp rebuild --target=#{target} --arch=#{arch} --target_platform=#{platform} --dist-url=https://gh-contractor-zcbenz.s3.amazonaws.com/atom-shell/dist #{nodePreGypParams}"
 
 		console.log "> #{cmd}".lightBlue unless program.quiet
 		child = exec cmd,
