@@ -47,7 +47,8 @@ program
 
 
 # pass-through some npm commands directly
-if process.argv[2] in 'dedupe shrinkwrap outdated version search publish'.split ' '
+# we only do build, install, rebuild, update
+if process.argv[2] in 'adduser bin bugs bundle cache completion config dedupe deprecate docs edit explore help help-search init link ls npm outdated owner pack prefix prune publish repo restart rm root run-script search shrinkwrap star stars start stop tag test uninstall unpublish version view whoami'.split ' '
 	cmd = "npm #{process.argv.slice(2).join(' ')}"
 	#console.log "> #{cmd}".lightBlue
 	#child = exec cmd
@@ -57,3 +58,5 @@ if process.argv[2] in 'dedupe shrinkwrap outdated version search publish'.split 
 else
 	program.parse process.argv
 	program.help() if program.args.length is 0
+
+
