@@ -1,7 +1,6 @@
 # TODO
 
 ## sooner
-
 - [ ] add examples directory
 - [x] fake support for current node-pre-gyp with lookup table as-ver -> node_abi (check n-pre-g ver from package)
 - [x] node-gyp configure
@@ -37,7 +36,6 @@
 - [ ] 
 
 ## later
-
 - [x] precompile coffee ~~[`npm prepublish`?]~~, move `coffee-script` to devDependency
 - [ ] test cross-compilation with `--target-platform`
 - [ ] ask someone else to test on darwin (lago1283?)
@@ -46,7 +44,7 @@
 - [ ] 
  
 # MAYBE's
-
+- [ ] only do `node-gyp configure` on rebuild?
 - [ ] new branch: use `minimist`
 - [ ] node-pre-gyp: or fallback to `lib/binding/`?
 - [ ] add `aspm init`?

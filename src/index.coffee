@@ -83,6 +83,8 @@ module.exports.buildModule = buildModule = (moduleName, program, cb) ->
 	
 	[moduleName] = moduleName.split '@'
 
+	# error if module is not found
+	return cb?(new Error("aspm: module not found '#{moduleName}'")) unless fs.existsSync path.join process.cwd(), 'node_modules', moduleName, 'package.json'
 	# skip if module has no bynding.gyp
 	return cb() unless fs.existsSync path.join process.cwd(), 'node_modules', moduleName, 'binding.gyp'
 	
@@ -100,10 +102,10 @@ module.exports.buildModule = buildModule = (moduleName, program, cb) ->
 		if semver.lte nodePreGypVersion, '0.6.1'
 			node_abi = do ->
 				atomshellToModulesVersion =
-					"0.16.x": 14
-					"0.17.x": 15
-					"0.18.x": 16
-					"0.19.x": 16
+					'0.16.x': '0.11.13'
+					'0.17.x': '0.11.14'
+					'0.18.x': '0.11.14'
+					'0.19.x': '0.11.14'
 				targetParts = target.split '.'
 				targetParts[2] = 'x'
 				targetSimplified = targetParts.join '.'
