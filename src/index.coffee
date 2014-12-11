@@ -46,7 +46,7 @@ module.exports.fetchModule = fetchModule = (module, program, cb) ->
 	cmd = "npm install --ignore-scripts #{module}"
 	cmd += ' --save' if program.save
 	cmd += ' --save-dev' if program['save-dev']
-	cmd += ' --production' unless program['no-production']
+	#cmd += ' --production' unless program['no-production']
 	console.log "> #{cmd}".lightBlue unless program.quiet
 	child = exec cmd
 	child.stdout.pipe process.stdout unless program.quiet
