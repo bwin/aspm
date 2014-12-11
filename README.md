@@ -1,4 +1,3 @@
-
 # aspm - Atom-Shell package manager
 [![build status](http://img.shields.io/travis/bwin/aspm.svg?style=flat-square)](https://travis-ci.org/bwin/aspm)
 [![dependencies](http://img.shields.io/david/bwin/aspm.svg?style=flat-square)](https://david-dm.org/bwin/aspm)
@@ -9,6 +8,20 @@
 `aspm` is designed as an replacement for `npm` if you're working on an Atom-Shell project.
 
 **Warning:** *May be unreliable at the moment.*
+
+**Table of Contents**
+- [Prequisities](#prequisities)
+- [Installation](#installation)
+- [Quick-Start](#quick-start)
+- [Usage](#usage)
+- [Configuration (optional)](#configuration-optional)
+  - [Overriding configuration](#overriding-configuration)
+  - [Without configuration](#without-configuration)
+- [Examples](#examples)
+- [How it works](#how-it-works)
+  - [Under the hood](#under-the-hood)
+  - [Support for modules that use `node-pre-gyp`](#support-for-modules-that-use-node-pre-gyp)
+- [BTW](#btw)
 
 ## Prequisities
 Since you're using Atom-Shell you most likely have those installed already.
