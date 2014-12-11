@@ -1,6 +1,6 @@
 
 # aspm - Atom-Shell package manager
-
+[![build status](http://img.shields.io/travis/bwin/aspm.svg?style=flat-square)](https://travis-ci.org/bwin/aspm)
 [![dependencies](http://img.shields.io/david/bwin/aspm.svg?style=flat-square)](https://david-dm.org/bwin/aspm)
 [![npm version](http://img.shields.io/npm/v/aspm.svg?style=flat-square)](https://npmjs.org/package/aspm)
 

@@ -7,8 +7,9 @@ try
 	pkg = require '../package.json'
 catch e
 
-fail = ->
-	console.error "\nnot ok".red
+fail = (err) ->
+	console.error err.message
+	console.error "not ok".red
 	process.exit 1
 	return
 
@@ -36,14 +37,14 @@ program
 .alias 'f'
 .description 'fetch module'
 .action (module) ->
-	aspm.fetchModule module, program, -> (err) -> fail err if err; console.log "ok".green
+	aspm.fetchModule module, program, (err) -> fail err if err; console.log "ok".green
 
 program
 .command 'build <module>'
 .alias 'b'
 .description 'build module'
 .action (module) ->
-	aspm.buildModule module, program, -> (err) -> fail err if err; console.log "ok".green
+	aspm.buildModule module, program, (err) -> fail err if err; console.log "ok".green
 
 
 program.parse process.argv

@@ -2,25 +2,26 @@
 
 ## sooner
 
+- [ ] !!! node-gyp configure
+- [ ] !!! fake support for current node-pre-gyp with lookup table as-ver -> node_abi (check n-pre-g ver from package)
 - [x] readme: switch examples to "with config" by default and explain how to set/override trough CLI
 - [ ] fix building for a specific module ver `sqlite@3.0.4`
 - [x] output for cmd is "> #{cmd}"
 - [ ] test `aspm i package1 package2 package3` & add example
-- [ ] d'oh! build modules recursive
-- [ ] !!! fake support for current node-pre-gyp with lookup table as-ver -> node_abi
 - [ ] add `aspm update`
 - [ ] test new node-pre-gyp versioning patch
-- [ ] add tests, travis
+- [x] add tests, travis
+- [ ] test specific vers of printer, sqlite3
+- [ ] fix tests
 - [ ] readme: explain under the hood (npm, node-gyp)
 - [ ] readme: mention node-pre-gyp support (you get the "node" and the "gyp", without the "pre")
-- [ ] readme: mention atom-shell-starter and that you will look into this and the other one mentioned in BTW
-- [ ] check if cmd ends in `gyp ok`
+- [x] readme: mention atom-shell-starter and that you will look into this and the other one mentioned in BTW
+- [x] check if cmd ends in `gyp ok`
 - [x] separate cli and api
-- [ ] new branch: use `minimist`
 - [ ] issue [discussion]: pass-trough other actions to npm (dedupe, shrinkwrap, outdated, version, search, publish, ...)
 - [ ] allow overriding of `--dist-url` (also from config)
 - [ ] `npm build`, `npm prepublish`, src/, lib/, .npmignore(src/???, appveyor.yml), move `coffee-script` to devDependency
-- [ ] error handling
+- [ ] error handling/reporting
 - [ ] --verbose
 - [ ] --quiet
 - [x] cli colors (https://github.com/tinganho/terminal-colors)
@@ -37,12 +38,13 @@
 - [ ] test cross-compilation with `--target-platform`
 - [ ] ask someone else to test on darwin (lago1283?)
 - [ ] `--no-colors`
+- [ ] build modules recursive
 - [ ] 
  
 # MAYBE's
 
 - [ ] issue [discussion]: use `--production` flag for npm by default? and add `--no-production` or `--dev`?
-- [ ] use something else instead of `commander`? (`minimist`?)
+- [ ] new branch: use `minimist`
 - [ ] node-pre-gyp: or fallback to `lib/binding/`?
 - [ ] add `aspm init`?
 - [ ] add `aspm config`?
@@ -52,7 +54,7 @@
 
 npmPasstrough = "dedupe shrinkwrap outdated version search publish"
 
-(need/want semver?)
+~~(need/want semver?)~~
 atomshellToModulesVersion =
 	"0.16.x": 14
 	"0.17.x": 15
