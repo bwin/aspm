@@ -5,145 +5,55 @@ expect = chai.expect
 
 aspm = require '../lib'
 
+platform = process.platform()
+
+testBuild = (module, opts) ->
+	opts.quiet = yes
+	msg = 'should build "time@0.11.0"'
+	msg += " for Atom-Shell@#{opts.target} on #{platform} @#{opts.arch}" if opts.target and opts.arch
+	it msg, (done) ->
+		aspm.installModule 'time@0.11.0', opts, (err) ->
+			done err
+
+
 describe 'build', ->
 	@timeout 1000*60*30
 	
 	describe 'js-only modules', ->
-
-		it 'should install "async"', (done) ->
-			aspm.installModule 'async',
-				quiet: yes
-			, (err) ->
-				done(err)
+		testBuild 'async'
 
 	describe 'native modules', ->
-
 		# time
-
-		it 'should build "time@0.11.0" for as-0.17.2 ia32', (done) ->
-			aspm.installModule 'time@0.11.0',
-				quiet: yes
-				target: '0.17.2'
-				arch: 'ia32'
-			, (err) ->
-				done(err)
-
-		it 'should build "time@0.11.0" for as-0.17.2 x64', (done) ->
-			aspm.installModule 'time@0.11.0',
-				quiet: yes
-				target: '0.17.2'
-				arch: 'x64'
-			, (err) ->
-				done(err)
-
-		it 'should build "time@0.11.0" for as-0.19.5 ia32', (done) ->
-			aspm.installModule 'time@0.11.0',
-				quiet: yes
-				target: '0.19.5'
-				arch: 'ia32'
-			, (err) ->
-				done(err)
-
-		it 'should build "time@0.11.0" for as-0.19.5 x64', (done) ->
-			aspm.installModule 'time@0.11.0',
-				quiet: yes
-				target: '0.19.5'
-				arch: 'x64'
-			, (err) ->
-				done(err)
-
+		testBuild 'time@0.11.0', target: '0.17.2', arch: 'ia32'
+		testBuild 'time@0.11.0', target: '0.17.2', arch: 'x64'
+		testBuild 'time@0.11.0', target: '0.19.5', arch: 'ia32'
+		testBuild 'time@0.11.0', target: '0.19.5', arch: 'x64'
 		# leveldown
-
-		it 'should build "leveldown@1.0.0" for as-0.17.2 ia32', (done) ->
-			aspm.installModule 'leveldown@1.0.0',
-				quiet: yes
-				target: '0.17.2'
-				arch: 'ia32'
-			, (err) ->
-				done(err)
-
-		it 'should build "leveldown@1.0.0" for as-0.17.2 x64', (done) ->
-			aspm.installModule 'leveldown@1.0.0',
-				quiet: yes
-				target: '0.17.2'
-				arch: 'x64'
-			, (err) ->
-				done(err)
-
-		it 'should build "leveldown@1.0.0" for as-0.19.5 ia32', (done) ->
-			aspm.installModule 'leveldown@1.0.0',
-				quiet: yes
-				target: '0.19.5'
-				arch: 'ia32'
-			, (err) ->
-				done(err)
-
-		it 'should build "leveldown@1.0.0" for as-0.19.5 x64', (done) ->
-			aspm.installModule 'leveldown@1.0.0',
-				quiet: yes
-				target: '0.19.5'
-				arch: 'x64'
-			, (err) ->
-				done(err)
-
+		testBuild 'leveldown@1.0.0', target: '0.17.2', arch: 'ia32'
+		testBuild 'leveldown@1.0.0', target: '0.17.2', arch: 'x64'
+		testBuild 'leveldown@1.0.0', target: '0.19.5', arch: 'ia32'
+		testBuild 'leveldown@1.0.0', target: '0.19.5', arch: 'x64'
 		###
 		# node-sass
-
-		it 'should build "node-sass@1.2.3" for as-0.17.2 ia32', (done) ->
-			aspm.installModule 'node-sass@1.2.3',
-				quiet: yes
-				target: '0.17.2'
-				arch: 'ia32'
-			, (err) ->
-				done(err)
+		testBuild 'node-sass@1.2.3', target: '0.17.2', arch: 'ia32'
+		testBuild 'node-sass@1.2.3', target: '0.17.2', arch: 'x64'
+		testBuild 'node-sass@1.2.3', target: '0.19.5', arch: 'ia32'
+		testBuild 'node-sass@1.2.3', target: '0.19.5', arch: 'x64'
 		###
 
 	describe 'native modules that use node-pre-gyp', ->
 		
 		###
 		# nodegit
-
-		it 'should build "nodegit@0.2.4" for as-0.17.2 ia32', (done) ->
-			aspm.installModule 'nodegit@0.2.4',
-				quiet: yes
-				target: '0.17.2'
-				arch: 'ia32'
-			, (err) ->
-				done(err)
+		testBuild 'nodegit@0.2.4', target: '0.17.2', arch: 'ia32'
+		testBuild 'nodegit@0.2.4', target: '0.17.2', arch: 'x64'
+		testBuild 'nodegit@0.2.4', target: '0.19.5', arch: 'ia32'
+		testBuild 'nodegit@0.2.4', target: '0.19.5', arch: 'x64'
 		###
 
 		# sqlite3
+		testBuild 'nodegit@0.2.4', target: '0.17.2', arch: 'ia32'
+		testBuild 'nodegit@0.2.4', target: '0.17.2', arch: 'x64'
+		testBuild 'nodegit@0.2.4', target: '0.19.5', arch: 'ia32', tarball: 'https://github.com/mapbox/node-sqlite3/archive/master.tar.gz'
+		testBuild 'nodegit@0.2.4', target: '0.19.5', arch: 'x64', tarball: 'https://github.com/mapbox/node-sqlite3/archive/master.tar.gz'
 		
-		it 'should build "sqlite3@3.0.4" for as-0.17.2 ia32', (done) ->
-			aspm.installModule 'sqlite3@3.0.4',
-				quiet: yes
-				target: '0.17.2'
-				arch: 'ia32'
-			, (err) ->
-				done(err)
-
-		it 'should build "sqlite3@3.0.4" for as-0.17.2 x64', (done) ->
-			aspm.installModule 'sqlite3@3.0.4',
-				quiet: yes
-				target: '0.17.2'
-				arch: 'x64'
-			, (err) ->
-				done(err)
-
-		it 'should build "sqlite3@master" for as-0.19.5 ia32', (done) ->
-			aspm.installModule 'sqlite3',
-				quiet: yes
-				target: '0.19.5'
-				arch: 'ia32'
-				tarball: 'https://github.com/mapbox/node-sqlite3/archive/master.tar.gz'
-			, (err) ->
-				done(err)
-
-		it 'should build "sqlite3@master" for as-0.19.5 x64', (done) ->
-			aspm.installModule 'sqlite3',
-				quiet: yes
-				target: '0.19.5'
-				arch: 'x64'
-				tarball: 'https://github.com/mapbox/node-sqlite3/archive/master.tar.gz'
-			, (err) ->
-				done(err)
