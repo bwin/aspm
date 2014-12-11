@@ -34,23 +34,9 @@ describe 'build', ->
 			, (err) ->
 				done(err)
 
-		it 'should build "sqlite3@3.0.4" for as-0.19.5 ia32', (done) ->
-			aspm.installModule 'sqlite3',
-				target: '0.19.5'
-				arch: 'ia32'
-			, (err) ->
-				done(err)
-
-		it 'should build "sqlite3@3.0.4" for as-0.19.5 x64', (done) ->
-			aspm.installModule 'sqlite3',
-				target: '0.19.5'
-				arch: 'x64'
-			, (err) ->
-				done(err)
-
-
 		it 'should build "sqlite3@master" for as-0.19.5 ia32', (done) ->
 			aspm.installModule 'sqlite3',
+				quiet: yes
 				target: '0.19.5'
 				arch: 'ia32'
 				tarball: 'https://github.com/mapbox/node-sqlite3/archive/master.tar.gz'
@@ -59,6 +45,7 @@ describe 'build', ->
 
 		it 'should build "sqlite3@master" for as-0.19.5 x64', (done) ->
 			aspm.installModule 'sqlite3',
+				quiet: yes
 				target: '0.19.5'
 				arch: 'x64'
 				tarball: 'https://github.com/mapbox/node-sqlite3/archive/master.tar.gz'

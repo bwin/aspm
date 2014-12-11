@@ -2,18 +2,21 @@
 
 ## sooner
 
-- [ ] !!! node-gyp configure
 - [ ] !!! fake support for current node-pre-gyp with lookup table as-ver -> node_abi (check n-pre-g ver from package)
+
+- [x] node-gyp configure
 - [x] readme: switch examples to "with config" by default and explain how to set/override trough CLI
-- [ ] fix building for a specific module ver `sqlite@3.0.4`
+- [x] fix building for a specific module ver `sqlite@3.0.4`
 - [x] output for cmd is "> #{cmd}"
-- [ ] test `aspm i package1 package2 package3` & add example
+- [x] test `aspm i package1 package2 package3`
+- [ ] readme: add example "aspm i package1 package2@1.0.0 package3"
 - [ ] add `aspm update`
 - [ ] test new node-pre-gyp versioning patch
 - [x] add tests, travis
-- [ ] test specific vers of printer, sqlite3
-- [ ] fix tests
+- [x] test specific vers of printer, sqlite3
+- [x] fix tests
 - [ ] readme: explain under the hood (npm, node-gyp)
+- [ ] readme: quick start
 - [ ] readme: mention node-pre-gyp support (you get the "node" and the "gyp", without the "pre")
 - [x] readme: mention atom-shell-starter and that you will look into this and the other one mentioned in BTW
 - [x] check if cmd ends in `gyp ok`
@@ -23,7 +26,7 @@
 - [ ] `npm build`, `npm prepublish`, src/, lib/, .npmignore(src/???, appveyor.yml), move `coffee-script` to devDependency
 - [ ] error handling/reporting
 - [ ] --verbose
-- [ ] --quiet
+- [x] --quiet
 - [x] cli colors (https://github.com/tinganho/terminal-colors)
 - [ ] gist with atom-shell-require-sqlite3-test
 - [ ] PR node-pre-gyp: patch versioning.js and republish to npm
@@ -34,7 +37,7 @@
 
 ## later
 
-- [ ] precompile coffee [`npm prepublish`?], move `coffee-script` to devDependency
+- [x] precompile coffee [`npm prepublish`?], move `coffee-script` to devDependency
 - [ ] test cross-compilation with `--target-platform`
 - [ ] ask someone else to test on darwin (lago1283?)
 - [ ] `--no-colors`
