@@ -8,12 +8,12 @@ aspm = require '../lib'
 
 platform = os.platform()
 
-testBuild = (module, opts) ->
+testBuild = (moduleName, opts={}) ->
 	opts.quiet = yes
-	msg = 'should build "time@0.11.0"'
+	msg = "should build '#{moduleName}'"
 	msg += " for Atom-Shell@#{opts.target} on #{platform} @#{opts.arch}" if opts.target and opts.arch
 	it msg, (done) ->
-		aspm.installModule 'time@0.11.0', opts, (err) ->
+		aspm.installModule moduleName, opts, (err) ->
 			done err
 
 
