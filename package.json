@@ -9,8 +9,9 @@
   "scripts": {
     "pretest": "npm run clean",
     "test": "mocha --reporter spec --require=coffee-script/register test/*.coffee",
+    "test-verbose": "mocha --reporter spec --require=coffee-script/register test/*.coffee --verbose",
     "clean": "rm -rf tmp/",
-    "build": "coffee --output lib --compile src"
+    "build": "coffee --bare --output lib --compile src"
   },
   "engines": {
     "node": ">= 0.10.0"

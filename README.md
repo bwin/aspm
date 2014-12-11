@@ -1,5 +1,5 @@
 # aspm - Atom-Shell package manager
-[![build status](http://img.shields.io/travis/bwin/aspm.svg?style=flat-square)](https://travis-ci.org/bwin/aspm)
+[![build status](http://img.shields.io/travis/bwin/master/aspm.svg?style=flat-square)](https://travis-ci.org/bwin/aspm)
 [![dependencies](http://img.shields.io/david/bwin/aspm.svg?style=flat-square)](https://david-dm.org/bwin/aspm)
 [![npm version](http://img.shields.io/npm/v/aspm.svg?style=flat-square)](https://npmjs.org/package/aspm)
 
@@ -52,10 +52,12 @@ Install (preferred globally) with `npm install aspm -g`.
     -V, --version                     output the version number
     -t, --target <version>            Atom-Shell version
     -a, --arch <arch>                 target architecture
-    -a, --target-platform <platform>  target platform
+    -p, --target-platform <platform>  target platform
     -s, --save                        save as dependency to package.json
     -s, --save-dev                    save as devDependency to package.json
-    --tarball                         (fetch the url and) install from tarball.
+    -g                                install globally with normal npm
+    --tarball [url/path]              install from [remote] tarball
+    --quiet                           don't say anything
 ```
 
 ## Configuration (optional)
@@ -100,12 +102,16 @@ aspm install sqlite3 --tarball https://github.com/mapbox/node-sqlite3/archive/ma
 
 # Build a specific module for a specific target
 aspm build sqlite3 --target 0.19.5 --arch ia32
+
+# fetch all modules from package.json, then build all in a separate step
+aspm fetch
+aspm build
 ```
 
 ## How it works
 
 ### Under the hood
-We basically just call out to `npm` and `node-gyp` with some additional arguments.
+To fetch the modules we just call out to `npm` with `--ignore-scripts`. To build and `node-gyp` with some additional arguments.
 
 ### Support for modules that use `node-pre-gyp`
 We have basic support for compiling modules that use `node-pre-gyp` (i.e. `sqlite3`) by faking some stuff.

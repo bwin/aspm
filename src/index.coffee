@@ -54,9 +54,10 @@ module.exports.fetchModule = fetchModule = (moduleName, opts, cb) ->
 	console.log "fetching #{moduleName or 'all'}" unless opts.quiet
 	moduleName ?= ''
 	moduleName = opts.tarball if opts.tarball
-	cmd = "npm install --ignore-scripts #{moduleName}"
+	cmd = "npm install #{moduleName}"
+	cmd += ' --ignore-scripts' unless opts.runScripts
 	cmd += ' --save' if opts.save
-	cmd += ' --save-dev' if opts['save-dev']
+	cmd += ' --save-dev' if opts.saveDev
 	runCmd cmd, {}, opts.quiet, cb
 	return
 
@@ -102,10 +103,21 @@ module.exports.buildModule = buildModule = (moduleName, opts, cb) ->
 		if semver.lte nodePreGypVersion, '0.6.1'
 			node_abi = do ->
 				atomshellToModulesVersion =
-					'0.16.x': '0.11.13'
-					'0.17.x': '0.11.14'
-					'0.18.x': '0.11.14'
 					'0.19.x': '0.11.14'
+					'0.18.x': '0.11.14'
+					'0.17.x': '0.11.14'
+					'0.16.x': '0.11.13'
+					'0.15.x': '0.11.13'
+					'0.14.x': '0.11.13'
+					'0.13.x': '0.11.10'
+					'0.12.x': '0.11.10'
+					'0.11.x': '0.11.10'
+					'0.10.x': '0.11.10'
+					'0.9.x': '0.11.10'
+					'0.8.x': '0.11.10'
+					'0.7.x': '0.10.18'
+					'0.6.x': '0.10.18'
+
 				targetParts = target.split '.'
 				targetParts[2] = 'x'
 				targetSimplified = targetParts.join '.'
@@ -117,6 +129,9 @@ module.exports.buildModule = buildModule = (moduleName, opts, cb) ->
 		.replace '{node_abi}', node_abi
 		.replace '{platform}', os.platform()
 		.replace '{arch}', arch
+		.replace '{module_name}', moduleName
+		.replace '{configuration}', 'Release'
+		.replace '{version}', buildPkg.version
 		
 		preGyp =
 			module_name: buildPkg.binary.module_name
@@ -131,7 +146,9 @@ module.exports.buildModule = buildModule = (moduleName, opts, cb) ->
 	for scriptName in 'prepublish preinstall'.split ' '
 		if buildPkg.scripts?[scriptName]?
 			cmd = "npm run #{scriptName}"
-			q.defer runCmd, cmd, {}, opts.quiet
+			q.defer runCmd, cmd,
+				cwd: "node_modules/#{moduleName}"
+			, opts.quiet
 	q.awaitAll (err) ->
 		configureModule moduleName, opts, nodePreGypParams, (err) ->
 			console.log "building #{moduleName} for Atom-Shell v#{target} #{os.platform()} #{arch}" unless opts.quiet
@@ -150,7 +167,7 @@ module.exports.buildModule = buildModule = (moduleName, opts, cb) ->
 				rmDirRecursiveSync "node_modules/#{moduleName}/build/"
 				###
 
-				# run port-scripts from package.json
+				# run post-scripts from package.json
 				q = queue(1)
 				for scriptName in 'postinstall'.split ' ' # also 'install'?
 					if buildPkg.scripts?[scriptName]?

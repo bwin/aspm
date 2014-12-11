@@ -18,18 +18,25 @@ program
 .description 'Install and build npm modules for Atom-Shell'
 .option '-t, --target <version>', 'Atom-Shell version'
 .option '-a, --arch <arch>', 'target architecture'
-.option '-a, --target-platform <platform>', 'target platform'
+.option '-p, --target-platform <platform>', 'target platform'
 .option '-s, --save', 'save as dependency to package.json'
 .option '-s, --save-dev', 'save as devDependency to package.json'
-.option '--tarball', '(fetch the url and) install from tarball.'
-.option '--quiet', 'pshht.'
+.option '-g', 'install globally with normal npm'
+.option '--tarball [url/path]', 'install from [remote] tarball'
+.option '--quiet', "don't say anything"
+.option '--run-scripts', "do not use --ignore-scripts flag"
 
 program
 .command 'install [module]'
 .alias 'i'
 .description 'install module (fetch & build)'
 .action (module) ->
-	aspm.installModule module, program, (err) -> fail err if err; console.log "ok".green
+	if program.G
+		# with -g flag we use npm directly
+		cmd = "npm #{process.argv.slice(2).join(' ')}"
+		aspm.runCmd cmd, {}, no, (err) -> fail err if err; console.log "ok".green
+	else
+		aspm.installModule module, program, (err) -> fail err if err; console.log "ok".green
 
 program
 .command 'fetch [module]'
@@ -48,12 +55,8 @@ program
 
 # pass-through some npm commands directly
 # we only do build, install, rebuild, update
-if process.argv[2] in 'adduser bin bugs bundle cache completion config dedupe deprecate docs edit explore help help-search init link ls npm outdated owner pack prefix prune publish repo restart rm root run-script search shrinkwrap star stars start stop tag test uninstall unpublish version view whoami'.split ' '
+if process.argv[2] in 'adduser bin bugs bundle cache completion config dedupe deprecate docs edit explore help help-search init info link ls npm outdated owner pack prefix prune publish repo restart rm root run run-script search shrinkwrap star stars start stop tag test uninstall unpublish version view whoami'.split ' '
 	cmd = "npm #{process.argv.slice(2).join(' ')}"
-	#console.log "> #{cmd}".lightBlue
-	#child = exec cmd
-	#child.stdout.pipe process.stdout
-	#child.stderr.pipe process.stderr
 	aspm.runCmd cmd, {}, no, (err) -> fail err if err; console.log "ok".green
 else
 	program.parse process.argv
