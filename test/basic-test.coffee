@@ -26,6 +26,14 @@ describe 'build', ->
 			, (err) ->
 				done(err)
 
+		it 'should build "printer" for as-0.17.2 x64', (done) ->
+			aspm.installModule 'printer',
+				quiet: yes
+				target: '0.17.2',
+				arch: 'x64',
+			, (err) ->
+				done(err)
+
 		it 'should build "printer" for as-0.19.5 ia32', (done) ->
 			aspm.installModule 'printer',
 				quiet: yes
