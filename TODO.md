@@ -2,6 +2,7 @@
 
 ## sooner
 - [ ] run scripts: prepublish, preinstall, install, postinstall
+- [ ] moving binding break `time`
 - [ ] add examples directory
 - [x] fake support for current node-pre-gyp with lookup table as-ver -> node_abi (check n-pre-g ver from package)
 - [x] node-gyp configure

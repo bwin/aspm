@@ -126,21 +126,39 @@ module.exports.buildModule = buildModule = (moduleName, opts, cb) ->
 		nodePreGypParams += " --module_name=#{preGyp.module_name}"
 		nodePreGypParams += " --module_path=#{preGyp.module_path}"
 
-	configureModule moduleName, opts, nodePreGypParams, (err) ->
-		console.log "building #{moduleName} for Atom-Shell v#{target} #{os.platform()} #{arch}" unless opts.quiet
+	# run pre-scripts from package.json
+	q = queue(1)
+	for scriptName in 'prepublish preinstall'.split ' '
+		if buildPkg.scripts?[scriptName]?
+			cmd = "npm run #{scriptName}"
+			q.defer runCmd, cmd, {}, opts.quiet
+	q.awaitAll (err) ->
+		configureModule moduleName, opts, nodePreGypParams, (err) ->
+			console.log "building #{moduleName} for Atom-Shell v#{target} #{os.platform()} #{arch}" unless opts.quiet
 
-		cmd = "node-gyp rebuild --target=#{target} --arch=#{arch} --target_platform=#{platform} --dist-url=https://gh-contractor-zcbenz.s3.amazonaws.com/atom-shell/dist #{nodePreGypParams}"
+			cmd = "node-gyp rebuild --target=#{target} --arch=#{arch} --target_platform=#{platform} --dist-url=https://gh-contractor-zcbenz.s3.amazonaws.com/atom-shell/dist #{nodePreGypParams}"
 
-		runCmd cmd,
-			cwd: "node_modules/#{moduleName}"
-		, opts.quiet, (err) ->
-			return cb?(err) if err
-			unless fakeNodePreGyp
-				# we move the node_module.node file to lib/binding
-				try fs.mkdirSync "node_modules/#{moduleName}/lib/binding"
-				fs.renameSync "node_modules/#{moduleName}/build/Release/node_#{moduleName}.node", "node_modules/#{moduleName}/lib/binding/node_#{moduleName}.node"
-			rmDirRecursiveSync "node_modules/#{moduleName}/build/"
-			return cb?()
+			runCmd cmd,
+				cwd: "node_modules/#{moduleName}"
+			, opts.quiet, (err) ->
+				return cb?(err) if err
+				###
+				unless fakeNodePreGyp
+					# we move the node_module.node file to lib/binding
+					try fs.mkdirSync "node_modules/#{moduleName}/lib/binding"
+					fs.renameSync "node_modules/#{moduleName}/build/Release/node_#{moduleName}.node", "node_modules/#{moduleName}/lib/binding/node_#{moduleName}.node"
+				rmDirRecursiveSync "node_modules/#{moduleName}/build/"
+				###
+
+				# run port-scripts from package.json
+				q = queue(1)
+				for scriptName in 'postinstall'.split ' ' # also 'install'?
+					if buildPkg.scripts?[scriptName]?
+						cmd = "npm run #{scriptName}"
+						q.defer runCmd, cmd, {}, opts.quiet
+				q.awaitAll (err) ->
+					return cb?()
+			return
 		return
 	return
 

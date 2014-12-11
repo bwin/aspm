@@ -16,27 +16,7 @@ describe 'build', ->
 			, (err) ->
 				done(err)
 
-	###
 	describe 'native modules', ->
-		
-		it 'should build "sqlite3@3.0.4" for as-0.17.2 ia32', (done) ->
-			aspm.installModule 'sqlite3',
-				quiet: yes
-				target: '0.17.2'
-				arch: 'ia32'
-			, (err) ->
-				done(err)
-	###
-
-	describe 'native modules that use node-pre-gyp', ->
-		
-		it 'should build "nodegit@0.2.4" for as-0.17.2 ia32', (done) ->
-			aspm.installModule 'nodegit@0.2.4',
-				quiet: yes
-				target: '0.17.2'
-				arch: 'ia32'
-			, (err) ->
-				done(err)
 
 		it 'should build "time@0.11.0" for as-0.17.2 ia32', (done) ->
 			aspm.installModule 'time@0.11.0',
@@ -46,13 +26,35 @@ describe 'build', ->
 			, (err) ->
 				done(err)
 
-		it 'should build "nodegit@0.2.4" for as-0.17.2 ia32', (done) ->
-			aspm.installModule 'sqlite3@0.2.4',
+		it 'should build "leveldown@1.0.0" for as-0.17.2 ia32', (done) ->
+			aspm.installModule 'leveldown@1.0.0',
 				quiet: yes
 				target: '0.17.2'
 				arch: 'ia32'
 			, (err) ->
 				done(err)
+
+		###
+		it 'should build "node-sass@1.2.3" for as-0.17.2 ia32', (done) ->
+			aspm.installModule 'node-sass@1.2.3',
+				quiet: yes
+				target: '0.17.2'
+				arch: 'ia32'
+			, (err) ->
+				done(err)
+		###
+
+	describe 'native modules that use node-pre-gyp', ->
+		
+		###
+		it 'should build "nodegit@0.2.4" for as-0.17.2 ia32', (done) ->
+			aspm.installModule 'nodegit@0.2.4',
+				quiet: yes
+				target: '0.17.2'
+				arch: 'ia32'
+			, (err) ->
+				done(err)
+		###
 
 		it 'should build "sqlite3@3.0.4" for as-0.17.2 ia32', (done) ->
 			aspm.installModule 'sqlite3@3.0.4',
@@ -66,22 +68,6 @@ describe 'build', ->
 			aspm.installModule 'sqlite3@3.0.4',
 				quiet: yes
 				target: '0.17.2'
-				arch: 'x64'
-			, (err) ->
-				done(err)
-
-		it 'should build "sqlite3@3.0.4" for as-0.19.5 ia32', (done) ->
-			aspm.installModule 'sqlite3@3.0.4',
-				quiet: yes
-				target: '0.19.5'
-				arch: 'ia32'
-			, (err) ->
-				done(err)
-
-		it 'should build "sqlite3@3.0.4" for as-0.19.5 x64', (done) ->
-			aspm.installModule 'sqlite3@3.0.4',
-				quiet: yes
-				target: '0.19.5'
 				arch: 'x64'
 			, (err) ->
 				done(err)
