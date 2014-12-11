@@ -5,9 +5,7 @@ program = require 'commander'
 
 aspm = require '../lib'
 
-try
-	pkg = require '../package.json'
-catch e
+pkg = require '../package.json'
 
 fail = (err) ->
 	console.error err.message
