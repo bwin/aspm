@@ -12,6 +12,7 @@ testInstall = (moduleName, opts={}) ->
 	opts.quiet = yes
 	msg = "should install '#{moduleName}'"
 	msg += " for Atom-Shell@#{opts.target} on #{platform} @#{opts.arch}" if opts.target and opts.arch
+	msg += " from #{opts.tarball}" if opts.tarball
 	it msg, (done) ->
 		aspm.installModule moduleName, opts, (err) ->
 			done err
@@ -53,7 +54,7 @@ describe 'build', ->
 		###
 
 		# sqlite3
-		testInstall 'nodegit@0.2.4', target: '0.17.2', arch: 'ia32'
-		testInstall 'nodegit@0.2.4', target: '0.17.2', arch: 'x64'
-		testInstall 'nodegit@0.2.4', target: '0.19.5', arch: 'ia32', tarball: 'https://github.com/mapbox/node-sqlite3/archive/master.tar.gz'
-		testInstall 'nodegit@0.2.4', target: '0.19.5', arch: 'x64', tarball: 'https://github.com/mapbox/node-sqlite3/archive/master.tar.gz'
+		testInstall 'sqlite3@3.0.4', target: '0.17.2', arch: 'ia32'
+		testInstall 'sqlite3@3.0.4', target: '0.17.2', arch: 'x64'
+		testInstall 'sqlite3', target: '0.19.5', arch: 'ia32', tarball: 'https://github.com/mapbox/node-sqlite3/archive/master.tar.gz'
+		testInstall 'sqlite3', target: '0.19.5', arch: 'x64', tarball: 'https://github.com/mapbox/node-sqlite3/archive/master.tar.gz'
