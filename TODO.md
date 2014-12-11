@@ -33,6 +33,7 @@
 - [ ] PR node-sqlite3: update node-pre-gyp and republish to npm
 - [ ] start discussion (with examples) with mapbox (dane, mithgol) for patching node-pre-gyp
 - [ ] look at grunt-build-atom-shell (maybe PR fake-node-pre-gyp?)
+- [ ] add ~/.aspm/config.json
 - [ ] 
 
 ## later

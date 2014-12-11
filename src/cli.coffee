@@ -24,7 +24,6 @@ program
 .option '-s, --save', 'save as dependency to package.json'
 .option '-s, --save-dev', 'save as devDependency to package.json'
 .option '--tarball', '(fetch the url and) install from tarball.'
-#.option '--no-production', 'disable passing "--production" flag to npm.'
 .option '--quiet', 'pshht.'
 
 program

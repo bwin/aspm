@@ -57,7 +57,6 @@ module.exports.fetchModule = fetchModule = (moduleName, program, cb) ->
 	cmd = "npm install --ignore-scripts #{moduleName}"
 	cmd += ' --save' if program.save
 	cmd += ' --save-dev' if program['save-dev']
-	#cmd += ' --production' unless program['no-production']
 	runCmd cmd, {}, program.quiet, cb
 	return
 
