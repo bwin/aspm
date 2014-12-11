@@ -5,6 +5,7 @@ os = require 'os'
 exec = require('child_process').exec
 
 queue = require 'queue-async'
+semver = require 'semver'
 require 'terminal-colors'
 
 
@@ -26,17 +27,27 @@ rmDirRecursiveSync = (dirPath) ->
 	try fs.rmdirSync dirPath
 	return
 
+module.exports.runCmd = runCmd = (cmd, opts, quiet, cb) ->
+	console.log "> #{cmd}".lightBlue unless quiet
+	errMsg = ''
+	child = exec cmd, opts
+	child.stdout.pipe process.stdout unless quiet
+	unless quiet
+		child.stderr.pipe process.stderr
+	else
+		child.stderr.on 'data', (chunk) -> errMsg += chunk; return
+
+	child.on 'exit', (code) ->
+		return cb?(new Error "command failed: #{cmd}", errMsg) if code isnt 0
+		cb?()
+	return
 
 configureModule = (moduleName, program, nodePreGypParams, cb) ->
 	cmd = "node-gyp configure #{nodePreGypParams}"
-	console.log "> #{cmd}".lightBlue unless program.quiet
-	child = exec cmd,
+
+	runCmd cmd,
 		cwd: "node_modules/#{moduleName}"
-	child.stdout.pipe process.stdout unless program.quiet
-	child.stderr.pipe process.stderr unless program.quiet
-	child.on 'exit', (code) ->
-		return cb?(new Error "node-gyp configure error") if code isnt 0
-		cb?()
+	, program.quiet, cb
 	return
 	
 module.exports.fetchModule = fetchModule = (moduleName, program, cb) ->
@@ -47,14 +58,7 @@ module.exports.fetchModule = fetchModule = (moduleName, program, cb) ->
 	cmd += ' --save' if program.save
 	cmd += ' --save-dev' if program['save-dev']
 	#cmd += ' --production' unless program['no-production']
-	console.log "> #{cmd}".lightBlue unless program.quiet
-	child = exec cmd
-	child.stdout.pipe process.stdout unless program.quiet
-	child.stderr.pipe process.stderr unless program.quiet
-	child.on 'exit', (code) ->
-		return cb?(new Error "npm install error") if code isnt 0
-		#console.log "ok".green
-		cb?()
+	runCmd cmd, {}, program.quiet, cb
 	return
 
 module.exports.buildModule = buildModule = (moduleName, program, cb) ->
@@ -90,10 +94,26 @@ module.exports.buildModule = buildModule = (moduleName, program, cb) ->
 
 	fakeNodePreGyp = buildPkg.dependencies?['node-pre-gyp']? and buildPkg.binary?
 	if fakeNodePreGyp
+		nodePreGypPkg = require path.join process.cwd(), 'node_modules', moduleName, 'node_modules', 'node-pre-gyp', 'package.json'
+		nodePreGypVersion = nodePreGypPkg.version
+
+		node_abi = "atom-shell-v#{target}"
+		if semver.lte nodePreGypVersion, '0.6.1'
+			node_abi = do ->
+				atomshellToModulesVersion =
+					"0.16.x": 14
+					"0.17.x": 15
+					"0.18.x": 16
+					"0.19.x": 16
+				targetParts = target.split '.'
+				targetParts[2] = 'x'
+				targetSimplified = targetParts.join '.'
+				return "node-v#{atomshellToModulesVersion[targetSimplified]}"
+
 		module_path = buildPkg.binary.module_path
 		# fake node-pre-gyp
 		module_path = module_path
-		.replace '{node_abi}', "atom-shell-v#{target}"
+		.replace '{node_abi}', node_abi
 		.replace '{platform}', os.platform()
 		.replace '{arch}', arch
 		
@@ -110,16 +130,10 @@ module.exports.buildModule = buildModule = (moduleName, program, cb) ->
 
 		cmd = "node-gyp rebuild --target=#{target} --arch=#{arch} --target_platform=#{platform} --dist-url=https://gh-contractor-zcbenz.s3.amazonaws.com/atom-shell/dist #{nodePreGypParams}"
 
-		console.log "> #{cmd}".lightBlue unless program.quiet
-		child = exec cmd,
+		runCmd cmd,
 			cwd: "node_modules/#{moduleName}"
-			#env:
-			#	HOME: '~/.atom-shell-gyp'
-		child.stdout.pipe process.stdout unless program.quiet
-		child.stderr.pipe process.stderr unless program.quiet
-		child.on 'exit', (code) ->
-			return cb?(new Error "node-gyp rebuild error") if code isnt 0
-			#console.log "ok".green
+		, program.quiet, (err) ->
+			return cb?(err) if err
 			unless fakeNodePreGyp
 				# we move the node_module.node file to lib/binding
 				try fs.mkdirSync "node_modules/#{moduleName}/lib/binding"

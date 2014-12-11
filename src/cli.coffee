@@ -1,4 +1,6 @@
 
+exec = require('child_process').exec
+
 program = require 'commander'
 
 aspm = require '../lib'
@@ -47,5 +49,14 @@ program
 	aspm.buildModule module, program, (err) -> fail err if err; console.log "ok".green
 
 
-program.parse process.argv
-program.help() if program.args.length is 0
+# pass-through some npm commands directly
+if process.argv[2] in 'dedupe shrinkwrap outdated version search publish'.split ' '
+	cmd = "npm #{process.argv.slice(2).join(' ')}"
+	#console.log "> #{cmd}".lightBlue
+	#child = exec cmd
+	#child.stdout.pipe process.stdout
+	#child.stderr.pipe process.stderr
+	aspm.runCmd cmd, {}, no, (err) -> fail err if err; console.log "ok".green
+else
+	program.parse process.argv
+	program.help() if program.args.length is 0

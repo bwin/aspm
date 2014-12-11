@@ -6,6 +6,8 @@
 
 > A node CLI script like npm but for Atom-Shell. Install and build npm-modules for Atom-Shell.
 
+`aspm` is designed as an replacement for `npm` if you're working on an Atom-Shell project.
+
 **Warning:** *May be unreliable at the moment.*
 
 ## Prequisities
@@ -15,6 +17,11 @@ Since you're using Atom-Shell you most likely have those installed already.
 
 ## Installation
 Install (preferred globally) with `npm install aspm -g`.
+
+## Quick-Start
+- Install globally with npm. `npm install -g aspm`
+- Add some configuration to your package.json. (See Configuration. This is optional but highly recommended.)
+- Now use `aspm` in place of `npm` in your project.
 
 ## Usage
 ```
@@ -68,6 +75,12 @@ aspm install
 # Install specific module and save as dependency in package.json
 aspm install sqlite3 --save
 
+# Install specific module in a specific version and save as dependency in package.json
+aspm install sqlite3@3.0.4 --save
+
+# Install multiple module and save as dependency in package.json
+aspm install sqlite3 async --save
+
 # Install module from tarball
 # In contrast to npm you have to specify the module name here too.
 aspm install sqlite3 --tarball https://github.com/mapbox/node-sqlite3/archive/master.tar.gz --target 0.19.5 --arch ia32
@@ -75,6 +88,14 @@ aspm install sqlite3 --tarball https://github.com/mapbox/node-sqlite3/archive/ma
 # Build a specific module for a specific target
 aspm build sqlite3 --target 0.19.5 --arch ia32
 ```
+
+## How it works
+
+### Under the hood
+We basically just call out to `npm` and `node-gyp` with some additional arguments.
+
+### Support for modules that use `node-pre-gyp`
+We have basic support for compiling modules that use `node-pre-gyp` (i.e. `sqlite3`) by faking some stuff.
 
 ## BTW
 There may or may not be several (maybe better?) alternatives to this.

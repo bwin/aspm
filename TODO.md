@@ -2,28 +2,28 @@
 
 ## sooner
 
-- [ ] !!! fake support for current node-pre-gyp with lookup table as-ver -> node_abi (check n-pre-g ver from package)
-
+- [ ] add examples directory
+- [x] fake support for current node-pre-gyp with lookup table as-ver -> node_abi (check n-pre-g ver from package)
 - [x] node-gyp configure
 - [x] readme: switch examples to "with config" by default and explain how to set/override trough CLI
 - [x] fix building for a specific module ver `sqlite@3.0.4`
 - [x] output for cmd is "> #{cmd}"
 - [x] test `aspm i package1 package2 package3`
-- [ ] readme: add example "aspm i package1 package2@1.0.0 package3"
+- [x] readme: add example "aspm i package1 package2@1.0.0 package3"
 - [ ] add `aspm update`
 - [ ] test new node-pre-gyp versioning patch
 - [x] add tests, travis
 - [x] test specific vers of printer, sqlite3
 - [x] fix tests
-- [ ] readme: explain under the hood (npm, node-gyp)
-- [ ] readme: quick start
-- [ ] readme: mention node-pre-gyp support (you get the "node" and the "gyp", without the "pre")
+- [x] readme: explain under the hood (npm, node-gyp)
+- [ ] readme: better explain under the hood
+- [x] readme: quick start
+- [ ] readme: better explain node-pre-gyp support (you get the "node" and the "gyp", without the "pre")
 - [x] readme: mention atom-shell-starter and that you will look into this and the other one mentioned in BTW
 - [x] check if cmd ends in `gyp ok`
 - [x] separate cli and api
-- [ ] issue [discussion]: pass-trough other actions to npm (dedupe, shrinkwrap, outdated, version, search, publish, ...)
+- [x] pass-trough other actions to npm (dedupe, shrinkwrap, outdated, version, search, publish, ...)
 - [ ] allow overriding of `--dist-url` (also from config)
-- [ ] `npm build`, `npm prepublish`, src/, lib/, .npmignore(src/???, appveyor.yml), move `coffee-script` to devDependency
 - [ ] error handling/reporting
 - [ ] --verbose
 - [x] --quiet
@@ -37,7 +37,7 @@
 
 ## later
 
-- [x] precompile coffee [`npm prepublish`?], move `coffee-script` to devDependency
+- [x] precompile coffee ~~[`npm prepublish`?]~~, move `coffee-script` to devDependency
 - [ ] test cross-compilation with `--target-platform`
 - [ ] ask someone else to test on darwin (lago1283?)
 - [ ] `--no-colors`
@@ -46,20 +46,9 @@
  
 # MAYBE's
 
-- [ ] issue [discussion]: use `--production` flag for npm by default? and add `--no-production` or `--dev`?
 - [ ] new branch: use `minimist`
 - [ ] node-pre-gyp: or fallback to `lib/binding/`?
 - [ ] add `aspm init`?
 - [ ] add `aspm config`?
 - [ ] copy `node-pre-gyp` tests?
 - [ ] 
-
-
-npmPasstrough = "dedupe shrinkwrap outdated version search publish"
-
-~~(need/want semver?)~~
-atomshellToModulesVersion =
-	"0.16.x": 14
-	"0.17.x": 15
-	"0.18.x": 16
-	"0.19.x": 16
