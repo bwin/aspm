@@ -42,30 +42,30 @@ module.exports.runCmd = runCmd = (cmd, opts, quiet, cb) ->
 		cb?()
 	return
 
-configureModule = (moduleName, program, nodePreGypParams, cb) ->
+configureModule = (moduleName, opts, nodePreGypParams, cb) ->
 	cmd = "node-gyp configure #{nodePreGypParams}"
 
 	runCmd cmd,
 		cwd: "node_modules/#{moduleName}"
-	, program.quiet, cb
+	, opts.quiet, cb
 	return
 	
-module.exports.fetchModule = fetchModule = (moduleName, program, cb) ->
-	console.log "fetching #{moduleName or 'all'}" unless program.quiet
+module.exports.fetchModule = fetchModule = (moduleName, opts, cb) ->
+	console.log "fetching #{moduleName or 'all'}" unless opts.quiet
 	moduleName ?= ''
-	moduleName = program.tarball if program.tarball
+	moduleName = opts.tarball if opts.tarball
 	cmd = "npm install --ignore-scripts #{moduleName}"
-	cmd += ' --save' if program.save
-	cmd += ' --save-dev' if program['save-dev']
-	runCmd cmd, {}, program.quiet, cb
+	cmd += ' --save' if opts.save
+	cmd += ' --save-dev' if opts['save-dev']
+	runCmd cmd, {}, opts.quiet, cb
 	return
 
-module.exports.buildModule = buildModule = (moduleName, program, cb) ->
+module.exports.buildModule = buildModule = (moduleName, opts, cb) ->
 	projectPkg = require path.join process.cwd(), 'package.json'
 	config = projectPkg.config?['atom-shell']
-	target = program.target or config?.version
-	arch = program.arch or config?.arch
-	platform = program['target-platform'] or config?['platform'] or os.platform()
+	target = opts.target or config?.version
+	arch = opts.arch or config?.arch
+	platform = opts['target-platform'] or config?['platform'] or os.platform()
 	modules = []
 	nodePreGypParams = ''
 
@@ -126,14 +126,14 @@ module.exports.buildModule = buildModule = (moduleName, program, cb) ->
 		nodePreGypParams += " --module_name=#{preGyp.module_name}"
 		nodePreGypParams += " --module_path=#{preGyp.module_path}"
 
-	configureModule moduleName, program, nodePreGypParams, (err) ->
-		console.log "building #{moduleName} for Atom-Shell v#{target} #{os.platform()} #{arch}" unless program.quiet
+	configureModule moduleName, opts, nodePreGypParams, (err) ->
+		console.log "building #{moduleName} for Atom-Shell v#{target} #{os.platform()} #{arch}" unless opts.quiet
 
 		cmd = "node-gyp rebuild --target=#{target} --arch=#{arch} --target_platform=#{platform} --dist-url=https://gh-contractor-zcbenz.s3.amazonaws.com/atom-shell/dist #{nodePreGypParams}"
 
 		runCmd cmd,
 			cwd: "node_modules/#{moduleName}"
-		, program.quiet, (err) ->
+		, opts.quiet, (err) ->
 			return cb?(err) if err
 			unless fakeNodePreGyp
 				# we move the node_module.node file to lib/binding
@@ -144,11 +144,11 @@ module.exports.buildModule = buildModule = (moduleName, program, cb) ->
 		return
 	return
 
-module.exports.installModule = (moduleName, program, cb) ->
-	console.log "installing #{moduleName or 'all'}" unless program.quiet
-	fetchModule moduleName, program, (err) ->
+module.exports.installModule = (moduleName, opts, cb) ->
+	console.log "installing #{moduleName or 'all'}" unless opts.quiet
+	fetchModule moduleName, opts, (err) ->
 		return cb?(err) if err
-		buildModule moduleName, program, (err) ->
+		buildModule moduleName, opts, (err) ->
 			return cb?(err)
 		return
 	return
