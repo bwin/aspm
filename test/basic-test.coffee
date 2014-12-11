@@ -1,11 +1,12 @@
 #build-printer.coffee
 
+os = require 'os'
 chai = require 'chai'
 expect = chai.expect
 
 aspm = require '../lib'
 
-platform = process.platform()
+platform = os.platform()
 
 testBuild = (module, opts) ->
 	opts.quiet = yes
@@ -56,4 +57,3 @@ describe 'build', ->
 		testBuild 'nodegit@0.2.4', target: '0.17.2', arch: 'x64'
 		testBuild 'nodegit@0.2.4', target: '0.19.5', arch: 'ia32', tarball: 'https://github.com/mapbox/node-sqlite3/archive/master.tar.gz'
 		testBuild 'nodegit@0.2.4', target: '0.19.5', arch: 'x64', tarball: 'https://github.com/mapbox/node-sqlite3/archive/master.tar.gz'
-		
