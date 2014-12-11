@@ -38,7 +38,7 @@ module.exports.runCmd = runCmd = (cmd, opts, quiet, cb) ->
 		child.stderr.on 'data', (chunk) -> errMsg += chunk; return
 
 	child.on 'exit', (code) ->
-		return cb?(new Error "command failed: #{cmd}", errMsg) if code isnt 0
+		return cb?(new Error "command failed: #{cmd}\n#{errMsg}") if code isnt 0
 		cb?()
 	return
 
