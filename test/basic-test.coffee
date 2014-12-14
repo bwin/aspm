@@ -51,7 +51,7 @@ describe 'build', ->
 		# testInstallMulti 'node-sass@1.2.3'
 
 	describe 'native module /w node-pre-gyp', ->
-		testInstallMulti 'nodegit@0.2.4'
+		# testInstallMulti 'nodegit@0.2.4'
 		testInstallMulti 'serialport@1.4.9'
 		testInstallMulti 'zipfile@0.5.4'
 		testInstallMulti 'v8-profiler@5.2.1'
