@@ -1,6 +1,7 @@
 # TODO
 
 ## sooner
+- [ ] tests: "modules /w yyy": "moduleName": "moduleVersion"(?): "for atom-shell...": "build"/"require"
 - [ ] pass trough whole argv to npm install plus(maybe) --ignore-scripts
 - [ ] build modules recursively !!
 - [ ] meta[test]: install and build in test/
@@ -31,6 +32,7 @@
 - [ ] 
  
 # MAYBE's
+- [ ] install modules somewhere else
 - [ ] simplify installModule?
 - [ ] new branch: use `minimist`
 - [ ] add `aspm init`?

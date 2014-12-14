@@ -1,16 +1,56 @@
-#build-printer.coffee
+###
+currently not working:
+* pathwatcher@*
+* serialport@*
+* zipfile@0.20.0
+* v8-profiler@*
+* sqlite3@0.20.0
+* npgta3 ?
+
+never worked:
+* node-sass
+* nodegit
+###
 
 os = require 'os'
+fs = require 'fs'
+path = require 'path'
+exec = require('child_process').exec
+
 chai = require 'chai'
 expect = chai.expect
+request = require 'request'
 
 aspm = require '../lib'
 
 platform = os.platform()
 
-#defaultTargets = '0.16.3 0.17.2 0.18.2 0.19.5'.split ' '
 defaultTargets = '0.17.2 0.19.5 0.20.0'.split ' '
 defaultArchs = 'ia32 x64'.split ' '
+defaultArchs = ['ia32'] if platform is 'win32'
+
+
+testModule = (moduleName, opts, cb) ->
+	[moduleName] = moduleName.split '@' # get rid of version
+	quiet = opts.quiet
+	atomShellExe = path.join 'atom-shell', "atom-shell-v#{opts.target}-#{platform}-#{opts.arch}", 'atom'
+	atomShellExe += '.exe' if platform is 'win32'
+	testDir = path.join 'tmp', moduleName
+	cmd = """
+		env ATOM_SHELL_INTERNAL_RUN_AS_NODE=1 #{atomShellExe} -e "require('#{moduleName}'); console.log('OK: required #{moduleName}')"
+	"""
+	#child = exec "#{atomShellExe} #{testDir}"
+	errMsg = ''
+	child = exec cmd
+	child.stdout.pipe process.stdout unless quiet
+	unless quiet
+		child.stderr.pipe process.stderr
+	else
+		child.stderr.on 'data', (chunk) -> errMsg += chunk; return
+	child.on 'exit', (code) ->
+		return cb?(new Error "command failed: #{cmd}\n#{errMsg}") if code isnt 0
+		cb?()
+	return
 
 testInstallMulti = (moduleName, targets=defaultTargets, archs=defaultArchs, opts={}) ->
 	for target in targets
@@ -19,8 +59,9 @@ testInstallMulti = (moduleName, targets=defaultTargets, archs=defaultArchs, opts
 			currentOpts[key] = val for key, val of opts # copy opts
 			currentOpts.target = target
 			currentOpts.arch = arch
-
+			
 			testInstall moduleName, currentOpts
+	return
 
 testInstall = (moduleName, opts={}) ->
 	opts.quiet = yes unless '--verbose' in process.argv
@@ -29,12 +70,46 @@ testInstall = (moduleName, opts={}) ->
 	msg += " from #{opts.tarball}" if opts.tarball
 	it msg, (done) ->
 		process.chdir opts.cwd if opts.cwd
-		command = if opts.build then aspm.buildModule else aspm.installModule
-		command moduleName, opts, (err) ->
-			done err
+		aspm.installModule moduleName, opts, (err) ->
+			return done err unless opts.target and opts.arch
+			testModule moduleName, opts, (err) ->
+				return done err
+			return
+		return
+	return
+
+downloadAtomShellMulti = (targets=defaultTargets, archs=defaultArchs, opts={}) ->
+	for target in targets
+		for arch in archs
+			do (target, arch) ->
+				it "#{target} #{platform} #{arch}", (done) -> downloadAtomShell target, arch, done
+	return
+
+downloadAtomShell = (target, arch, cb) ->
+	try fs.mkdirSync 'atom-shell'
+	releaseName = "atom-shell-v#{target}-#{platform}-#{arch}"
+	dir = path.join 'atom-shell', releaseName
+	return cb() if fs.existsSync dir # skip if we already have it
+	url = "https://github.com/atom/atom-shell/releases/download/v#{target}/#{releaseName}.zip"
+	zipfileName = path.join 'atom-shell', "#{releaseName}.zip"
+	zipfile = fs.createWriteStream zipfileName
+	request(url).pipe(zipfile).on 'finish', ->
+		zipfile.close ->
+			exec "unzip #{zipfileName} -d #{dir}", (err) ->
+				fs.unlink zipfileName, cb
+				return
+			return
+		return
+	return
+
+
+describe 'download atom-shell', ->
+	@timeout 1000*60 * 5 # minutes
+
+	downloadAtomShellMulti()
 
 describe 'build', ->
-	@timeout 1000*60 * 30 # minutes
+	@timeout 1000*60 * 3 # minutes
 
 	describe 'js-only module', ->
 		testInstall 'async'
