@@ -1,12 +1,4 @@
 ###
-currently not working:
-* pathwatcher@*
-* serialport@*
-* zipfile@0.20.0
-* v8-profiler@*
-* sqlite3@0.20.0
-* npgta3 ?
-
 never worked:
 * node-sass
 * nodegit
@@ -71,6 +63,7 @@ testInstall = (moduleName, opts={}) ->
 	it msg, (done) ->
 		process.chdir opts.cwd if opts.cwd
 		aspm.installModule moduleName, opts, (err) ->
+			return done err if err
 			return done err unless opts.target and opts.arch
 			testModule moduleName, opts, (err) ->
 				return done err
@@ -126,7 +119,7 @@ describe 'build', ->
 		# testInstallMulti 'node-sass@1.2.3'
 
 	describe 'native module /w node-pre-gyp', ->
-		# testInstallMulti 'nodegit@0.2.4'
+		# testInstallMulti 'nodegit@0.2.4', null, null, compatibility: yes
 		testInstallMulti 'serialport@1.4.9'
 		testInstallMulti 'zipfile@0.5.4'
 		testInstallMulti 'v8-profiler@5.2.1'

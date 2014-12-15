@@ -25,6 +25,7 @@ program
 .option '--tarball [url/path]', 'install from [remote] tarball'
 .option '--quiet', "don't say anything"
 .option '--run-scripts', "do not use --ignore-scripts flag"
+.option '--compatibility', "try for max compability"
 
 program
 .command 'install [module]'

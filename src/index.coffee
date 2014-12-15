@@ -100,29 +100,39 @@ module.exports.buildModule = buildModule = (moduleName, opts, cb) ->
 		nodePreGypVersion = nodePreGypPkg.version
 
 		node_abi = "atom-shell-v#{target}"
-		if semver.lte nodePreGypVersion, '0.6.1'
+		if semver.lte nodePreGypVersion, '999.0.0' # some future version with atom-shell support
 			node_abi = do ->
 				atomshellToModulesVersion =
+					'0.20.x': 17
+					"0.19.x": 16
+					"0.18.x": 16
+					"0.17.x": 15
+					"0.16.x": 14
+				atomshellToNodeVersion =
 					'0.20.x': '0.13.0-pre'
 					'0.19.x': '0.11.14'
 					'0.18.x': '0.11.14'
 					'0.17.x': '0.11.14'
 					'0.16.x': '0.11.13'
-					'0.15.x': '0.11.13'
-					'0.14.x': '0.11.13'
-					'0.13.x': '0.11.10'
-					'0.12.x': '0.11.10'
-					'0.11.x': '0.11.10'
-					'0.10.x': '0.11.10'
-					'0.9.x': '0.11.10'
-					'0.8.x': '0.11.10'
-					'0.7.x': '0.10.18'
-					'0.6.x': '0.10.18'
+					#'0.15.x': '0.11.13'
+					#'0.14.x': '0.11.13'
+					#'0.13.x': '0.11.10'
+					#'0.12.x': '0.11.10'
+					#'0.11.x': '0.11.10'
+					#'0.10.x': '0.11.10'
+					#'0.9.x': '0.11.10'
+					#'0.8.x': '0.11.10'
+					#'0.7.x': '0.10.18'
+					#'0.6.x': '0.10.18'
+
+				lookupTable = do ->
+					return atomshellToModulesVersion if semver.lt nodePreGypVersion, '0.6.0'
+					return atomshellToNodeVersion
 
 				targetParts = target.split '.'
 				targetParts[2] = 'x'
 				targetSimplified = targetParts.join '.'
-				return "node-v#{atomshellToModulesVersion[targetSimplified]}"
+				return "node-v#{lookupTable[targetSimplified]}"
 
 		module_path = buildPkg.binary.module_path
 		# fake node-pre-gyp
@@ -130,7 +140,7 @@ module.exports.buildModule = buildModule = (moduleName, opts, cb) ->
 		.replace '{node_abi}', node_abi
 		.replace '{platform}', os.platform()
 		.replace '{arch}', arch
-		.replace '{module_name}', moduleName
+		.replace '{module_name}', buildPkg.binary.module_name
 		.replace '{configuration}', 'Release'
 		.replace '{version}', buildPkg.version
 		
@@ -144,7 +154,9 @@ module.exports.buildModule = buildModule = (moduleName, opts, cb) ->
 
 	# run pre-scripts from package.json
 	q = queue(1)
-	for scriptName in 'prepublish preinstall'.split ' '
+	preScripts = 'prepublish preinstall'.split ' '
+	preScripts.push 'install' if opts.compatibility
+	for scriptName in preScripts
 		if buildPkg.scripts?[scriptName]?
 			cmd = "npm run #{scriptName}"
 			q.defer runCmd, cmd,
