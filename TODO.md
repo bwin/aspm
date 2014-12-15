@@ -4,6 +4,9 @@
 - [ ] tests: "modules /w yyy": "moduleName": "moduleVersion"(?): "for atom-shell...": "build"/"require"
 - [ ] pass trough whole argv to npm install plus(maybe) --ignore-scripts
 - [ ] build modules recursively !!
+- [ ] 
+
+## next
 - [ ] meta[test]: install and build in test/
 - [ ] test using `--build-from-source` for better compability
 - [ ] investigate npm-only build way
@@ -25,10 +28,7 @@
 - [ ] ask someone else to test on darwin (lago1283?)
 - [ ] PR node-pre-gyp: patch versioning.js and republish to npm
 - [ ] PR node-sqlite3: update node-pre-gyp and republish to npm
-- [ ] start discussion (with examples) with mapbox (dane, mithgol) for patching node-pre-gyp
-- [ ] look at grunt-build-atom-shell (maybe PR fake-node-pre-gyp?)
 - [ ] `--no-colors`
-- [x] --verbose
 - [ ] 
  
 # MAYBE's
@@ -37,5 +37,4 @@
 - [ ] new branch: use `minimist`
 - [ ] add `aspm init`?
 - [ ] add `aspm config`?
-- [ ] copy `node-pre-gyp` tests?
 - [ ] 
