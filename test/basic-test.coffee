@@ -1,4 +1,15 @@
 ###
+try these:
+* node-expat
+* ffi
+* midi
+maybe:
+* airtunes
+* canvas
+try (with npg):
+* mapnik
+* osmium
+* osrm
 never worked:
 * node-sass
 * nodegit
@@ -31,7 +42,6 @@ testModule = (moduleName, opts, cb) ->
 	cmd = """
 		env ATOM_SHELL_INTERNAL_RUN_AS_NODE=1 #{atomShellExe} -e "require('#{moduleName}'); console.log('OK: required #{moduleName}')"
 	"""
-	#child = exec "#{atomShellExe} #{testDir}"
 	errMsg = ''
 	child = exec cmd
 	child.stdout.pipe process.stdout unless quiet
@@ -57,11 +67,12 @@ testInstallMulti = (moduleName, targets=defaultTargets, archs=defaultArchs, opts
 
 testInstall = (moduleName, opts={}) ->
 	opts.quiet = yes unless '--verbose' in process.argv
+	opts.cwd = 'tmp'
 	msg = moduleName
 	msg += " for Atom-Shell@#{opts.target} on #{platform} #{opts.arch}" if opts.target and opts.arch
 	msg += " from #{opts.tarball}" if opts.tarball
 	it msg, (done) ->
-		process.chdir opts.cwd if opts.cwd
+		#process.chdir opts.cwd if opts.cwd
 		aspm.installModule moduleName, opts, (err) ->
 			return done err if err
 			return done err unless opts.target and opts.arch
@@ -102,7 +113,18 @@ describe 'download atom-shell', ->
 	downloadAtomShellMulti()
 
 describe 'build', ->
-	@timeout 1000*60 * 3 # minutes
+	@timeout 1000*60 * 2 # minutes
+
+	try fs.mkdirSync 'tmp'
+	# create stub package.json in ./tmp/
+	fs.writeFileSync path.join('tmp', 'package.json'), """
+		{
+			"name": "aspm-test",
+			"description": "...",
+			"version": "0.0.1",
+			"private": true
+		}
+	"""
 
 	describe 'js-only module', ->
 		testInstall 'async'
@@ -120,12 +142,16 @@ describe 'build', ->
 
 	describe 'native module /w node-pre-gyp', ->
 		# testInstallMulti 'nodegit@0.2.4', null, null, compatibility: yes
+	##	testInstallMulti 'node-expat@2.3.3'
+	##	testInstallMulti 'ffi@1.2.7'
+	##	testInstallMulti 'midi@0.9.0'
+
 		testInstallMulti 'serialport@1.4.9'
 		testInstallMulti 'zipfile@0.5.4'
 		testInstallMulti 'v8-profiler@5.2.1'
 		testInstallMulti 'sqlite3@3.0.4', ['0.17.2']
 		testInstallMulti 'sqlite3@master', ['0.19.5', '0.20.0'], null, tarball: 'https://github.com/mapbox/node-sqlite3/archive/master.tar.gz'
-
+	
 	describe 'node-pre-gyp test app', ->
 		testInstallMulti 'node-pre-gyp-test-app1', null, null, tarball: 'test/node-pre-gyp/app1.tar.gz'
 		testInstallMulti 'node-pre-gyp-test-app3', null, null, tarball: 'test/node-pre-gyp/app3.tar.gz'

@@ -28,7 +28,7 @@ rmDirRecursiveSync = (dirPath) ->
 	return
 
 module.exports.runCmd = runCmd = (cmd, opts, quiet, cb) ->
-	console.log "> #{cmd}".lightBlue unless quiet
+	console.log "#{opts.cwd or ''}> #{cmd}".lightBlue unless quiet
 	errMsg = ''
 	child = exec cmd, opts
 	child.stdout.pipe process.stdout unless quiet
@@ -45,9 +45,10 @@ module.exports.runCmd = runCmd = (cmd, opts, quiet, cb) ->
 configureModule = (moduleName, opts, nodePreGypParams, cb) ->
 	cmd = "node-gyp configure #{nodePreGypParams}"
 
-	runCmd cmd,
-		cwd: "node_modules/#{moduleName}"
-	, opts.quiet, cb
+	cmdOpts =
+		cwd: path.join 'node_modules', moduleName
+	cmdOpts.cwd = path.join opts.cwd, cmdOpts.cwd if opts.cwd
+	runCmd cmd, cmdOpts, opts.quiet, cb
 	return
 	
 module.exports.fetchModule = fetchModule = (moduleName, opts, cb) ->
@@ -58,7 +59,9 @@ module.exports.fetchModule = fetchModule = (moduleName, opts, cb) ->
 	cmd += ' --ignore-scripts' unless opts.runScripts
 	cmd += ' --save' if opts.save
 	cmd += ' --save-dev' if opts.saveDev
-	runCmd cmd, {}, opts.quiet, cb
+	cmdOpts = {}
+	cmdOpts.cwd = opts.cwd if opts.cwd
+	runCmd cmd, cmdOpts, opts.quiet, cb
 	return
 
 module.exports.buildModule = buildModule = (moduleName, opts, cb) ->
@@ -84,19 +87,21 @@ module.exports.buildModule = buildModule = (moduleName, opts, cb) ->
 	
 	[moduleName] = moduleName.split '@' # get rid of version
 
+	modulePath = path.join opts.cwd or process.cwd(), 'node_modules', moduleName
+
 	# error if module is not found
-	return cb?(new Error("aspm: module not found '#{moduleName}'")) unless fs.existsSync path.join process.cwd(), 'node_modules', moduleName, 'package.json'
+	return cb?(new Error("aspm: module not found '#{moduleName}'")) unless fs.existsSync path.join modulePath, 'package.json'
 	# skip if module has no bynding.gyp
-	return cb() unless fs.existsSync path.join process.cwd(), 'node_modules', moduleName, 'binding.gyp'
+	return cb() unless fs.existsSync path.join modulePath, 'binding.gyp'
 	
 	return cb?(new Error "aspm: no atom-shell version specified.") unless target
 	return cb?(new Error "aspm: no target architecture specified.") unless arch
 
-	buildPkg = require path.join process.cwd(), 'node_modules', moduleName, 'package.json'
+	buildPkg = require path.join modulePath, 'package.json'
 
 	fakeNodePreGyp = buildPkg.dependencies?['node-pre-gyp']? and buildPkg.binary?
 	if fakeNodePreGyp
-		nodePreGypPkg = require path.join process.cwd(), 'node_modules', moduleName, 'node_modules', 'node-pre-gyp', 'package.json'
+		nodePreGypPkg = require path.join modulePath, 'node_modules', 'node-pre-gyp', 'package.json'
 		nodePreGypVersion = nodePreGypPkg.version
 
 		node_abi = "atom-shell-v#{target}"
@@ -156,21 +161,20 @@ module.exports.buildModule = buildModule = (moduleName, opts, cb) ->
 	q = queue(1)
 	preScripts = 'prepublish preinstall'.split ' '
 	preScripts.push 'install' if opts.compatibility
+	cmdOpts =
+		cwd: path.join 'node_modules', moduleName
+	cmdOpts.cwd = path.join opts.cwd, cmdOpts.cwd if opts.cwd
 	for scriptName in preScripts
 		if buildPkg.scripts?[scriptName]?
 			cmd = "npm run #{scriptName}"
-			q.defer runCmd, cmd,
-				cwd: "node_modules/#{moduleName}"
-			, opts.quiet
+			q.defer runCmd, cmd, cmdOpts, opts.quiet
 	q.awaitAll (err) ->
 		configureModule moduleName, opts, nodePreGypParams, (err) ->
 			console.log "building #{moduleName} for Atom-Shell v#{target} #{os.platform()} #{arch}" unless opts.quiet
 
 			cmd = "node-gyp rebuild --target=#{target} --arch=#{arch} --target_platform=#{platform} --dist-url=https://gh-contractor-zcbenz.s3.amazonaws.com/atom-shell/dist #{nodePreGypParams}"
 
-			runCmd cmd,
-				cwd: "node_modules/#{moduleName}"
-			, opts.quiet, (err) ->
+			runCmd cmd, cmdOpts, opts.quiet, (err) ->
 				return cb?(err) if err
 				###
 				unless fakeNodePreGyp
@@ -185,7 +189,7 @@ module.exports.buildModule = buildModule = (moduleName, opts, cb) ->
 				for scriptName in 'postinstall'.split ' ' # also 'install'?
 					if buildPkg.scripts?[scriptName]?
 						cmd = "npm run #{scriptName}"
-						q.defer runCmd, cmd, {}, opts.quiet
+						q.defer runCmd, cmd, cmdOpts, opts.quiet
 				q.awaitAll (err) ->
 					return cb?()
 			return
