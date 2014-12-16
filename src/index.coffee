@@ -87,7 +87,9 @@ module.exports.buildModule = buildModule = (moduleName, opts, cb) ->
 	
 	[moduleName] = moduleName.split '@' # get rid of version
 
-	modulePath = path.join opts.cwd or process.cwd(), 'node_modules', moduleName
+	cwd = process.cwd()
+	cwd = path.join '..', opts.cwd if opts.cwd
+	modulePath = path.join cwd, 'node_modules', moduleName
 
 	# error if module is not found
 	return cb?(new Error("aspm: module not found '#{moduleName}'")) unless fs.existsSync path.join modulePath, 'package.json'
