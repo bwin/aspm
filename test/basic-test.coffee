@@ -40,7 +40,7 @@ testModule = (moduleName, opts, cb) ->
 	atomShellExe += '.exe' if platform is 'win32'
 	testDir = path.join 'tmp', moduleName
 	cmd = """
-		env ATOM_SHELL_INTERNAL_RUN_AS_NODE=1 #{atomShellExe} -e "require('#{moduleName}'); console.log('OK: required #{moduleName}')"
+		env ATOM_SHELL_INTERNAL_RUN_AS_NODE=1 #{atomShellExe} -e "require('./tmp/node_modules/#{moduleName}'); console.log('OK: required #{moduleName}')"
 	"""
 	errMsg = ''
 	child = exec cmd
@@ -138,10 +138,10 @@ describe 'build', ->
 		testInstallMulti 'leveldown@1.0.0'
 		testInstallMulti 'nslog@1.0.1'
 		testInstallMulti 'pathwatcher@2.3.5'
-		# testInstallMulti 'node-sass@1.2.3'
+	##	testInstallMulti 'node-sass@1.2.3'
 
 	describe 'native module /w node-pre-gyp', ->
-		# testInstallMulti 'nodegit@0.2.4', null, null, compatibility: yes
+	##	testInstallMulti 'nodegit@0.2.4', null, null, compatibility: yes
 	##	testInstallMulti 'node-expat@2.3.3'
 	##	testInstallMulti 'ffi@1.2.7'
 	##	testInstallMulti 'midi@0.9.0'
