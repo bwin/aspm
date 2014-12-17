@@ -88,7 +88,7 @@ module.exports.buildModule = buildModule = (moduleName, opts, cb) ->
 	[moduleName] = moduleName.split '@' # get rid of version
 
 	cwd = process.cwd()
-	cwd = path.join '..', opts.cwd if opts.cwd
+	cwd = path.join cwd, opts.cwd if opts.cwd
 	modulePath = path.join cwd, 'node_modules', moduleName
 
 	# error if module is not found
