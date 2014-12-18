@@ -28,7 +28,7 @@ aspm = require '../lib'
 
 platform = os.platform()
 
-defaultTargets = '0.17.2 0.19.5 0.20.0'.split ' '
+defaultTargets = '0.17.2 0.19.5 0.20.1'.split ' '
 defaultArchs = 'ia32 x64'.split ' '
 defaultArchs = ['ia32'] if platform is 'win32'
 
@@ -150,8 +150,8 @@ describe 'build', ->
 		testInstallMulti 'zipfile@0.5.4'
 		testInstallMulti 'v8-profiler@5.2.1'
 		testInstallMulti 'sqlite3@3.0.4', ['0.17.2']
-		testInstallMulti 'sqlite3@master', ['0.19.5', '0.20.0'], null, tarball: 'https://github.com/mapbox/node-sqlite3/archive/master.tar.gz'
+		testInstallMulti 'sqlite3@master', ['0.19.5', '0.20.1'], null, tarball: 'https://github.com/mapbox/node-sqlite3/archive/master.tar.gz'
 	
 	describe 'node-pre-gyp test app', ->
-		testInstallMulti 'node-pre-gyp-test-app1', null, null, tarball: 'test/node-pre-gyp/app1.tar.gz'
-		testInstallMulti 'node-pre-gyp-test-app3', null, null, tarball: 'test/node-pre-gyp/app3.tar.gz'
+		testInstallMulti 'node-pre-gyp-test-app1', null, null, tarball: '../test/node-pre-gyp/app1.tar.gz'
+		testInstallMulti 'node-pre-gyp-test-app3', null, null, tarball: '../test/node-pre-gyp/app3.tar.gz'
