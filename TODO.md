@@ -1,6 +1,7 @@
 # TODO
 
 ## sooner
+- [ ] readme: add motivation
 - [ ] add tests for more modules
 - [ ] add commands: rebuild, update
 - [ ] tests: "modules /w yyy": "moduleName": "moduleVersion"(?): "for atom-shell...": "build"/"require"
