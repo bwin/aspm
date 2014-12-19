@@ -34,6 +34,7 @@
   "license": "MIT",
   "dependencies": {
     "commander": "^2.5.0",
+    "node-gyp": "^1.0.2",
     "queue-async": "^1.0.7",
     "request": "^2.51.0",
     "semver": "^4.1.0",
