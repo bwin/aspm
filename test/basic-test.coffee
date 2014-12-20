@@ -94,7 +94,7 @@ downloadAtomShell = (target, arch, cb) ->
 	releaseName = "atom-shell-v#{target}-#{platform}-#{arch}"
 	dir = path.join 'atom-shell', releaseName
 	return cb() if fs.existsSync dir # skip if we already have it
-	url = "http://github.com/atom/atom-shell/releases/download/v#{target}/#{releaseName}.zip"
+	url = "https://github.com/atom/atom-shell/releases/download/v#{target}/#{releaseName}.zip"
 	zipfileName = path.join 'atom-shell', "#{releaseName}.zip"
 	zipfile = fs.createWriteStream zipfileName
 	request(url).pipe(zipfile).on 'finish', ->
