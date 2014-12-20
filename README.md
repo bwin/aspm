@@ -23,6 +23,13 @@
   - [Support for modules that use `node-pre-gyp`](#support-for-modules-that-use-node-pre-gyp)
 - [BTW](#btw)
 
+## Motivation
+There are several ways to build modules for atom-shell, but none of them felt quite right for my needs. Also, since `node-pre-gyp` doesn't yet support atom-shell, it gets even worse for modules using that.
+This tries to be as convenient as possible for a small project. Just use it for everything in your project as you would use `npm`. Most of the time it does just pass-through to `npm` anyway.
+If you're compiling for several platforms/atom-shell-versions on the same machine, it probably makes more sense to use Grunt build tasks (see [grunt-build-atom-shell](https://github.com/paulcbetts/grunt-build-atom-shell). This also allows renaming the executable file on Windows. Probably even more.).
+
+Maybe this is unnecessary, does it the wrong way, is generally a stupid idea or whatever. (But at the time it works for me and makes updating atom-shell easier for me. Atom-shell-starter and grunt-build-atom-shell came after I started my current project.)
+
 ## Prequisities
 Since you're using Atom-Shell you most likely have those installed already.
 - `node` & `npm`(global)
@@ -60,6 +67,13 @@ Install (preferred globally) with `npm install aspm -g`.
     --quiet                           don't say anything
 ```
 
+Most npm commands are just passed trough to npm (dedupe, shrinkwrap, etc. should all work normally).
+
+Unlike npm which takes its parameters in the form `--target=1.2.3`, aspm expects `--target 1.2.3`.
+
+Also if you try to install globally with `-g` we bail out and just pretend you used npm in the first place, since it wouldn't make much sense to install for atom-shell globally.
+To do that anyways, you can use the `--g-yes-install-for-atom-shell-globally` flag. (No, you can't.)
+
 ## Configuration (optional)
 You can (and should to make things more convenient) configure default values for target, arch and platform in your `package.json`.
 ```js
@@ -82,26 +96,27 @@ You can always set/override some or all configuration values. For example: `aspm
 **Important:** If you don't specify default values, you'll always have to provide at least a target and arch.
 
 ## Examples
-Please note that `sqlite3` as an example does not work at the moment because of `node-pre-gyp`.
 ```
 # Install all modules from package.json
 aspm install
 
 # Install specific module and save as dependency in package.json
-aspm install sqlite3 --save
+aspm install serialport --save
 
 # Install specific module in a specific version and save as dependency in package.json
 aspm install sqlite3@3.0.4 --save
 
 # Install multiple module and save as dependency in package.json
-aspm install sqlite3 async --save
+aspm install pathwatcher v8-profiler --save
 
 # Install module from tarball
 # In contrast to npm you have to specify the module name here too.
 aspm install sqlite3 --tarball https://github.com/mapbox/node-sqlite3/archive/master.tar.gz --target 0.19.5 --arch ia32
 
 # Build a specific module for a specific target
-aspm build sqlite3 --target 0.19.5 --arch ia32
+aspm build leveldown --target 0.19.5 --arch ia32
+# or shorter
+aspm b leveldown -t 0.19.5 -a ia32
 
 # fetch all modules from package.json, then build all in a separate step
 aspm fetch
@@ -111,10 +126,20 @@ aspm build
 ## How it works
 
 ### Under the hood
-To fetch the modules we just call out to `npm` with `--ignore-scripts`. To build and `node-gyp` with some additional arguments.
+To fetch the modules we just call out to `npm` with `--ignore-scripts`. To build we use `node-gyp` with some additional arguments.
 
 ### Support for modules that use `node-pre-gyp`
 We have basic support for compiling modules that use `node-pre-gyp` (i.e. `sqlite3`) by faking some stuff.
+
+## Hints
+- [sqlite3]() in version 3.0.4 (current npm) won't compile for atom-shell >= 0.18.0. We can't change that. But it's possible to build with the current github master. (And it will when 3.0.5 or whatever comes next is released.)
+- The [test suite](https://travis-ci.org/bwin/aspm) compiles and requires a few modules for a few atom-shell versions on ia32 and x64.
+  - Modules/Packages: `time@0.11.0`, `leveldown@1.0.0`, `nslog@1.0.1`, `pathwatcher@2.3.5`, `serialport@1.4.9`, `zipfile@0.5.4`, `v8-profiler@5.2.1`, `sqlite3@3.0.4` & `sqlite3@master`(see above)
+  - Atom-Shell versions: 0.17.2, 0.19.5, current
+  - Platforms: linux ia32 & x64 on travis-ci and locally tested in a vm on Windows 7
+
+- I don't really know about Mac compability, since I don't have one here at the moment.
+- Modules with native dependencies won't get compiled at the moment. Well, their dependencies won't be. This makes using something like `nano` (which depends on `serialport`) impossible at the moment.
 
 ## BTW
 There may or may not be several (maybe better?) alternatives to this.
