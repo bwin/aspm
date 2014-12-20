@@ -1,7 +1,8 @@
 language: node_js
 node_js:
   - "0.11"
-  - "0.10"
+  # disabled because of CERT_UNTRUSTED error while running node-gyp
+  #- "0.10"
 before_install:
   - "sudo apt-get update"
   # we need these packages to run atom-shell
