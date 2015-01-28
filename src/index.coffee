@@ -110,12 +110,14 @@ module.exports.buildModule = buildModule = (moduleName, opts, cb) ->
 		if semver.lte nodePreGypVersion, '999.0.0' # some future version with atom-shell support
 			node_abi = do ->
 				atomshellToModulesVersion =
+					'0.21.x': 41
 					'0.20.x': 17
 					"0.19.x": 16
 					"0.18.x": 16
 					"0.17.x": 15
 					"0.16.x": 14
 				atomshellToNodeVersion =
+					'0.21.x': '1.0.0-pre'
 					'0.20.x': '0.13.0-pre'
 					'0.19.x': '0.11.14'
 					'0.18.x': '0.11.14'

@@ -1,5 +1,6 @@
 ###
 try these:
+* snappy@3.0.4
 * node-expat
 * ffi
 * midi
@@ -28,7 +29,7 @@ aspm = require '../lib'
 
 platform = os.platform()
 
-defaultTargets = '0.17.2 0.19.5 0.20.1'.split ' '
+defaultTargets = '0.17.2 0.19.5 0.20.1 0.20.8 0.21.0'.split ' '
 defaultArchs = 'ia32 x64'.split ' '
 defaultArchs = ['ia32'] if platform is 'win32'
 
